@@ -1,6 +1,8 @@
 package org.activeledger.java.sdk.onboard;
 
-public class IdentityList {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class OnboardIdentityList {
 	
 	private Identity identity;
 
@@ -12,10 +14,7 @@ public class IdentityList {
 		this.identity = identity;
 	}
 
-	@Override
-	public String toString() {
-		return "IdentityList [identity=" + identity + "]";
-	}
+
 	
 	
 	

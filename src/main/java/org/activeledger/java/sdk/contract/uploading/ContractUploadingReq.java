@@ -1,8 +1,5 @@
-package org.activeledger.java.sdk.onboard;
+package org.activeledger.java.sdk.contract.uploading;
 
-import java.security.KeyPair;
-
-import org.activeledger.java.sdk.key.management.Encryption;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -11,35 +8,30 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+public class ContractUploadingReq {
 
-@Component
-public class OnboardIdentity {
-	@Autowired
-	private OnboardIdentityReq onboardIdentiy;
+
+	
 	ObjectMapper mapper;
-	public OnboardIdentity()
-	{
-		mapper=new ObjectMapper();
+
+	public ContractUploadingReq() {
+		mapper = new ObjectMapper();
 	}
 	
-	public void onBoardIdentity(KeyPair keyPair,Encryption encrp)
-    { 
-    	OnboardTransaction	transaction =onboardIdentiy.onboard(keyPair,encrp);
-
-		//Gson gson = new Gson();
-		//String transactionJson = gson.toJson(transaction);
-        //System.out.println("JSON:"+transactionJson);;
-        try {
-        	String transactionJson = mapper.writeValueAsString(transaction);
+	public void uploadContract(ContractUploadingTransaction contractUploadingTransaction)
+	{
+		 //System.out.println("JSON:"+transactionJson);;
+		try {
+        	System.out.println("Sent transaction:"+mapper.writerWithDefaultPrettyPrinter().writeValueAsString(contractUploadingTransaction));
+        	String contractUploadingJson = mapper.writeValueAsString(contractUploadingTransaction);
         	
         	HttpClient httpclient = HttpClients.createDefault();
         	HttpPost httppost = new HttpPost("http://testnet-eu.activeledger.io:5260");
         	//HttpPost httppost = new HttpPost("http://127.0.0.1:5260");
-        	StringEntity entity=new StringEntity(transactionJson);
+        	StringEntity entity=new StringEntity(contractUploadingJson);
         	entity.setContentType("application/json");
         	httppost.setEntity(entity);
         	HttpResponse response = httpclient.execute(httppost);
@@ -55,7 +47,7 @@ public class OnboardIdentity {
         {
         	throw new IllegalArgumentException("Exception occurred while onboaring:"+e.getMessage());
         }
-	
-    }
+	}
+
 
 }

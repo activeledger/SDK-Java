@@ -2,8 +2,9 @@ package org.activeledger.java.sdk.onboard;
 
 public class Identity {
 
-	private String type;
+
 	private String publicKey;
+	private String type;
 	public String getType() {
 		return type;
 	}
@@ -16,11 +17,7 @@ public class Identity {
 	public void setPublicKey(String publicKey) {
 		this.publicKey = publicKey;
 	}
-	@Override
-	public String toString() {
-		return "Identity [type=" + type + ", publicKey=" + publicKey + "]";
-	}
-	
+
 	
 	
 }

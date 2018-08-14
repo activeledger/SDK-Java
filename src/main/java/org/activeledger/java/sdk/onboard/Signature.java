@@ -2,6 +2,7 @@ package org.activeledger.java.sdk.onboard;
 
 public class Signature {
 
+
 	private String identity;
 
 	public String getIdentity() {

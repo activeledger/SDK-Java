@@ -1,4 +1,6 @@
 /target/
+/priv-key.pem
+/pub-key.pem
 
 
 ### STS ###

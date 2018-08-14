@@ -23,19 +23,19 @@ public class Utility {
 		return "PemFile [pemObject=" + pemObject + "]";
 	}
 
-	public static void writePem(String filename,String description,Key key) throws FileNotFoundException, IOException {
-		PemWriter pemWriter = new PemWriter(new FileWriter(filename));
-		try {
+	public static void writePem(String filename,String description,Key key) throws IOException  {
+			PemWriter pemWriter=null;
+			pemWriter = new PemWriter(new FileWriter(filename));
 			pemObject = new PemObject(description, key.getEncoded());
 			pemWriter.writeObject(pemObject);
-		} finally {
+		
 			pemWriter.close();
-		}
-
+		
 	}
 	
-	public static String readFileAsString(String fileName) throws IOException
+	public static String readFileAsString(String fileName)
 	{
+		try {
 		InputStream is = new FileInputStream(fileName); 
 		BufferedReader buf = new BufferedReader(new InputStreamReader(is)); 
 		String line = buf.readLine(); 
@@ -45,7 +45,12 @@ public class Utility {
 			sb.append(line).append("\n"); 
 			line = buf.readLine(); 
 		} 
+		buf.close();
 		String fileAsString = sb.toString();
 		return fileAsString;
+		}catch(IOException e)
+		{
+			throw new IllegalArgumentException("Exception occurred while reading PEM file:"+e.getMessage());
+		}
 	}
 }
