@@ -2,9 +2,11 @@ package org.activeledger.java.sdk.transfer.funds;
 
 import java.util.Map;
 
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 @JsonInclude(Include.NON_NULL)
 public class TransferFundsTxObject {
 

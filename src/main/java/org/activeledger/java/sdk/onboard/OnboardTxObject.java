@@ -1,7 +1,10 @@
 package org.activeledger.java.sdk.onboard;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+@JsonInclude(Include.NON_NULL)
 public class OnboardTxObject {
 
 	@JsonProperty("$namespace")
