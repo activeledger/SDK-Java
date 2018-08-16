@@ -2,20 +2,20 @@ package org.activeledger.java.sdk.utility;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.Key;
 
+import org.apache.log4j.Logger;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
 
 public class Utility {
 
 	private static PemObject pemObject;
-
+	final static Logger logger = Logger.getLogger(Utility.class);
 
 
 	@Override
@@ -50,6 +50,7 @@ public class Utility {
 		return fileAsString;
 		}catch(IOException e)
 		{
+			logger.error("Exception occurred while reading PEM file",e);
 			throw new IllegalArgumentException("Exception occurred while reading PEM file:"+e.getMessage());
 		}
 	}

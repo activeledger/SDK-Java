@@ -1,4 +1,4 @@
-package org.activeledger.java.sdk.contract.uploading;
+package org.activeledger.java.sdk.generic.transaction;
 
 import org.activeledger.java.sdk.connection.Connection;
 import org.apache.http.HttpResponse;
@@ -12,43 +12,44 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Component("ContractUploadingReq")
-public class ContractUploadingReq extends Connection {
-
-	final static Logger logger = Logger.getLogger(ContractUploadingReq.class);
+@Component("TransactionReq")
+public class TransactionReq extends Connection {
+	
+final static Logger logger = Logger.getLogger(TransactionReq.class);
 	
 	ObjectMapper mapper;
 
-	public ContractUploadingReq() {
+	public TransactionReq() {
 		mapper = new ObjectMapper();
 	}
 	
-	public String uploadContract(ContractUploadingTransaction contractUploadingTransaction)
+	public String transaction(Transaction transaction)
 	{
 		 //System.out.println("JSON:"+transactionJson);;
 		try {
-        
-			String contractUploadingJson = mapper.writeValueAsString(contractUploadingTransaction);
+        	System.out.println("Sent transaction:"+mapper.writerWithDefaultPrettyPrinter().writeValueAsString(transaction));
+        	String contractUploadingJson = mapper.writeValueAsString(transaction);
         	
         	HttpClient httpclient = HttpClients.createDefault();
         	HttpPost httppost = new HttpPost(getConnectionURL());
+  
         	StringEntity entity=new StringEntity(contractUploadingJson);
         	entity.setContentType("application/json");
         	httppost.setEntity(entity);
         	HttpResponse response = httpclient.execute(httppost);
-        	
 
         	String responseAsString = EntityUtils.toString(response.getEntity());
+
         	return responseAsString;
-        	
 
         }
         catch(Exception e)
         {
-        	logger.error("Exception occurred while onboaring",e);
-        	throw new IllegalArgumentException("Exception occurred while onboaring:"+e.getMessage());
+        	logger.error("Exception occurred while sending transaction",e);
+        	throw new IllegalArgumentException("Exception occurred while sending transaction"+e.getMessage());
         }
 	}
+
 
 
 }

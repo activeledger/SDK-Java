@@ -1,34 +1,25 @@
 package org.activeledger.java.sdk.generic.transaction;
 
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.activeledger.java.sdk.contract.uploading.ContractUploadingReq;
-import org.activeledger.java.sdk.key.management.Encryption;
-import org.activeledger.java.sdk.key.management.KeyGen;
-import org.activeledger.java.sdk.nhpk.NHPK;
-import org.activeledger.java.sdk.nhpk.NHPKModel;
-import org.activeledger.java.sdk.onboard.OnboardIdentityReq;
-import org.activeledger.java.sdk.utility.Utility;
+import org.activeledger.java.sdk.signature.Sign;
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Component("GenericTransaction")
 public class GenericTransaction {
 	
 	
-	
+	final static Logger logger = Logger.getLogger(GenericTransaction.class);
 
 	@Autowired
-	ContractUploadingReq contractUploadingReq;
+	TransactionReq transactionReq;
 
-	/*@Autowired
-	OnboardIdentityReq onBoardingIdentityReq;
-*/	
+	@Autowired
+	Sign sign;
+	
 	
 	ObjectMapper mapper;
 
@@ -38,14 +29,13 @@ public class GenericTransaction {
 		
 	}
 
-	public void transaction(TransactionModel transactionModel )
+	public JSONObject transaction(TransactionModel transactionModel) throws Exception
 	{
-		
-		try {
+
 			Transaction transaction=new Transaction();
 			TxObject txObject=new TxObject();
 
-			Map<String,Object> signatureMap=new HashMap<>();
+	
 			txObject.setInputIdentity(transactionModel.getTxObject().getInputIdentity());
 			txObject.setOutputIdentity(transactionModel.getTxObject().getOutputIdentity());
 			txObject.setStreamState(transactionModel.getTxObject().getStreamState());
@@ -53,23 +43,16 @@ public class GenericTransaction {
 			txObject.setNamespace(transactionModel.getTxObject().getNamespace());
 			transaction.setTxObject(txObject);
 		
-			String signTransactionObject = mapper.writeValueAsString(transaction.getTxObject());
-			String signature=OnboardIdentityReq.signMessage(signTransactionObject.getBytes(), transactionModel.getKeyPair(), transactionModel.getEncrp());
-			Map.Entry<String,Object> entry = transactionModel.getTxObject().getInputIdentity().entrySet().iterator().next();
-			signatureMap.put(entry.getKey(),signature);
-			transaction.setSignature(signatureMap);
-			transaction.setSelfSign(true);
-				
-			System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(transaction));;
+			transaction.setSignature(transactionModel.getSignature());
+			transaction.setSelfSign(transactionModel.isSelfSign());
 			
-			}
-			catch(Exception e)
-			{
-				throw new IllegalArgumentException("Unable to sign object:"+e.getMessage());
-			}
+			logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(transaction));
+			JSONObject jsonObj = new JSONObject(transactionReq.transaction(transaction));
+			logger.debug(jsonObj);
+			return jsonObj;
 	}
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 	
 		TransactionModel tm=new TransactionModel();
 		tm.setEncrp(Encryption.RSA);
@@ -101,26 +84,25 @@ public class GenericTransaction {
 		inputIdentityMap.put("host","127.0.0.1");
 		inputIdentityMap.put("port","5260");
 		inputIdentity.put("node", inputIdentityMap);
-		Map<String,Object> outputIdentity=new HashMap<>();
-		Map<String,String> outputIdentityMap=new HashMap<>();
-		
-		Map<String,Object> streamState=new HashMap<>();
-		Map<String,String> streamStateMap=new HashMap<>();
+
 		txObjectModel.setInputIdentity(inputIdentity);
 		tm.setTxObject(txObjectModel);
 		
+		//http://testnet-uk.activeledger.io:5260
 		
-		
-		
+		Connection conn=new Connection();
+		conn.setProtocol("http");
+		conn.setUrl("testnet-uk.activeledger.io");
+		conn.setPort("5260");
 		
 
 		GenericTransaction gt=new GenericTransaction();
 
 		
-		gt.transaction(tm);
+		gt.transaction(tm,conn);
 
 	}
-	
+	*/
 	
 
 }

@@ -1,6 +1,6 @@
 package org.activeledger.java.sdk.transfer.funds;
 
-import java.security.KeyPair;
+import java.util.Map;
 
 import org.activeledger.java.sdk.key.management.Encryption;
 
@@ -10,11 +10,12 @@ public class TransferFundsModel {
 	private String contract;
 	private String inputIdentity;
 	private String outputIdentity;
-	private KeyPair keyPair;
 	private String entry;
 	private String inputIdentitySymbol;
 	private Double amount;
 	private Encryption encrp;
+	private Map<String,String> signature;
+	private boolean selfSign;
 	public String getNamespace() {
 		return namespace;
 	}
@@ -38,12 +39,6 @@ public class TransferFundsModel {
 	}
 	public void setOutputIdentity(String outputIdentity) {
 		this.outputIdentity = outputIdentity;
-	}
-	public KeyPair getKeyPair() {
-		return keyPair;
-	}
-	public void setKeyPair(KeyPair keyPair) {
-		this.keyPair = keyPair;
 	}
 	public String getEntry() {
 		return entry;
@@ -69,6 +64,18 @@ public class TransferFundsModel {
 	}
 	public void setEncrp(Encryption encrp) {
 		this.encrp = encrp;
+	}
+	public Map<String,String> getSignature() {
+		return signature;
+	}
+	public void setSignature(Map<String,String> signature) {
+		this.signature = signature;
+	}
+	public boolean isSelfSign() {
+		return selfSign;
+	}
+	public void setSelfSign(boolean selfSign) {
+		this.selfSign = selfSign;
 	}
 	
 	

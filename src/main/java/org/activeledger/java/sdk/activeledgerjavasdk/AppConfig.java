@@ -2,9 +2,10 @@ package org.activeledger.java.sdk.activeledgerjavasdk;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-//@ComponentScan({"basePackages = org.activeledger.java.sdk.onboard","org.activeledger.java.sdk.key.management"})
+@PropertySource("classpath:application.properties")
 @ComponentScan("basePackages = org.activeledger.java.sdk")
 public class AppConfig {
 

@@ -8,6 +8,14 @@ public class NHPKTransaction {
 
 	@JsonProperty("$tx")	
 	private NHPKTxObject txObject;
+	@JsonProperty("$selfsign")
+	private boolean selfSign;
+	public boolean isSelfSign() {
+		return selfSign;
+	}
+	public void setSelfSign(boolean selfSign) {
+		this.selfSign = selfSign;
+	}
 	@JsonProperty("$sigs")
 	private Map<String,String> signature;
 	public NHPKTxObject getTxObject() {

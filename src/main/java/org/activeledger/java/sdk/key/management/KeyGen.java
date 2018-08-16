@@ -12,28 +12,35 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.spec.ECGenParameterSpec;
 
-import org.activeledger.java.sdk.onboard.OnboardIdentity;
-import org.activeledger.java.sdk.onboard.OnboardIdentityReq;
-import org.activeledger.java.sdk.onboard.OnboardTransaction;
 import org.activeledger.java.sdk.utility.Utility;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-@Component("keyGen")
+@Component("KeyGen")
 public class KeyGen {
+	
+	final static Logger logger = Logger.getLogger(KeyGen.class);
+
 	@Autowired
-	private OnboardIdentity onboardIdentiy;
+	private Environment env;
+	
+	private final String PRIVATE_FILE="priv-key.pem";
+	private final String PUBLIC_FILE="pub-key.pem";
+	
+	private final String EC_PRIVATE_FILE_DESC="EC PRIVATE KEY";
+	private final String RSA_PRIVATE_FILE_DESC="RSA PRIVATE KEY";
+
+	@Value("${rsa.keysize}")
+	private Integer keySize;
+
+
 	ObjectMapper mapper;
 	
 		public KeyGen()
@@ -43,7 +50,7 @@ public class KeyGen {
 
 	
 	    public KeyPair generateKeyPair(Encryption encrp) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, IOException {
-	        
+	      
 	    		Security.addProvider(new BouncyCastleProvider());
 	    		KeyPair keyPair=null;
 	    		if(encrp==Encryption.RSA) {
@@ -57,32 +64,45 @@ public class KeyGen {
 				
 				if(encrp==Encryption.RSA)
 				{
-					Utility.writePem("priv-key.pem","RSA PRIVATE KEY",priv);
+					Utility.writePem(PRIVATE_FILE,RSA_PRIVATE_FILE_DESC,priv);
 				}
 				else
 				{
-					Utility.writePem("priv-key.pem","EC PRIVATE KEY",priv);
+					Utility.writePem(PRIVATE_FILE,EC_PRIVATE_FILE_DESC,priv);
 				}
-				Utility.writePem("pub-key.pem","PUBLIC KEY",pub);
+				Utility.writePem(PUBLIC_FILE,"PUBLIC KEY",pub);
 				//onboardIdentiy.onBoardIdentity(keyPair,encrp);
 				return keyPair;
 	    }
 	    
 	    
 		public KeyPair createSecp256k1KeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-
-			 KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("ECDSA", "BC");
-			 ECGenParameterSpec ecGenParameterSpec = new ECGenParameterSpec("secp256k1");
+			logger.debug("Generating EC key pair");
+			 KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(env.getProperty("encryption.type.ec"), "BC");
+			 ECGenParameterSpec ecGenParameterSpec = new ECGenParameterSpec(env.getProperty("ec.curve"));
 			 keyPairGenerator.initialize(ecGenParameterSpec,new SecureRandom());
 			 return keyPairGenerator.generateKeyPair();
 		}
 	
 		private KeyPair createRSAKeyPair() throws NoSuchAlgorithmException, NoSuchProviderException  {
-
-			 KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");
-			 keyPairGenerator.initialize(2048);
+			logger.debug("Generating RSA key pair"+getKeySize());
+			 KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(env.getProperty("encryption.type.rsa"), "BC");
+			 keyPairGenerator.initialize((getKeySize()));
 			 return keyPairGenerator.generateKeyPair();
 		}
+
+
+		public Integer getKeySize() {
+			return keySize;
+		}
+
+
+		public void setKeySize(Integer keySize) {
+			this.keySize = keySize;
+		}
+		
+		
+
 
 		
 	}

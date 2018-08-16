@@ -1,6 +1,7 @@
 package org.activeledger.java.sdk.contract.uploading;
 
 import java.security.KeyPair;
+import java.util.Map;
 
 import org.activeledger.java.sdk.key.management.Encryption;
 
@@ -11,12 +12,20 @@ public class ContractUploadModel {
 	private String Identity;
 	private KeyPair keyPair;
 	private String version;
+	private boolean selfSign;
 	private String keyNamespace;
 	private String name;
 	private String smartContract;
 	private Encryption encrp;
+	Map<String,String> signature;
 	
 	
+	public Map<String, String> getSignature() {
+		return signature;
+	}
+	public void setSignature(Map<String, String> signature) {
+		this.signature = signature;
+	}
 	public String getNamespace() {
 		return namespace;
 	}
@@ -70,6 +79,12 @@ public class ContractUploadModel {
 	}
 	public void setEncrp(Encryption encrp) {
 		this.encrp = encrp;
+	}
+	public boolean isSelfSign() {
+		return selfSign;
+	}
+	public void setSelfSign(boolean selfSign) {
+		this.selfSign = selfSign;
 	}
 	
 	

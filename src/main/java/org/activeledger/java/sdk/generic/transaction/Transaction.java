@@ -4,11 +4,9 @@ import java.util.Map;
 
 import javax.ws.rs.DefaultValue;
 
-import org.activeledger.java.sdk.nhpk.NHPKTxObject;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(Include.NON_NULL)
 public class Transaction {
 

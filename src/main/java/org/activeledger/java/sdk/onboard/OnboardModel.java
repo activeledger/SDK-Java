@@ -1,18 +1,18 @@
-package org.activeledger.java.sdk.nhpk;
+package org.activeledger.java.sdk.onboard;
 
 import java.util.Map;
 
 import org.activeledger.java.sdk.key.management.Encryption;
 
-public class NHPKModel {
+public class OnboardModel {
 
 	private String namespace;
 	private String contract;
 	private String Identity;
-	private String publicKey;
-	private boolean selfSign;
 	private Encryption encrp;
+	private boolean selfSign;
 	private Map<String,String> signature;
+	private String publicKey;
 	public String getNamespace() {
 		return namespace;
 	}
@@ -37,10 +37,10 @@ public class NHPKModel {
 	public void setEncrp(Encryption encrp) {
 		this.encrp = encrp;
 	}
-	public Map<String,String> getSignature() {
+	public Map<String, String> getSignature() {
 		return signature;
 	}
-	public void setSignature(Map<String,String> signature) {
+	public void setSignature(Map<String, String> signature) {
 		this.signature = signature;
 	}
 	public String getPublicKey() {
@@ -55,9 +55,6 @@ public class NHPKModel {
 	public void setSelfSign(boolean selfSign) {
 		this.selfSign = selfSign;
 	}
-	
-	
-	
 	
 	
 	

@@ -3,59 +3,64 @@ package org.activeledger.java.sdk.onboard;
 import java.security.KeyPair;
 
 import org.activeledger.java.sdk.key.management.Encryption;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-@Component
+@Component("OnboardIdentity")
 public class OnboardIdentity {
+	
+	final static Logger logger = Logger.getLogger(OnboardIdentity.class);
+
 	@Autowired
-	private OnboardIdentityReq onboardIdentiy;
+	OnboardIdentityReq onboardIdentityReq;
+	
 	ObjectMapper mapper;
-	public OnboardIdentity()
-	{
-		mapper=new ObjectMapper();
+
+
+	public OnboardIdentity() {
+		mapper = new ObjectMapper();
 	}
+
 	
-	public void onBoardIdentity(KeyPair keyPair,Encryption encrp)
-    { 
-    	OnboardTransaction	transaction =onboardIdentiy.onboard(keyPair,encrp);
 
-		//Gson gson = new Gson();
-		//String transactionJson = gson.toJson(transaction);
-        //System.out.println("JSON:"+transactionJson);;
-        try {
-        	String transactionJson = mapper.writeValueAsString(transaction);
-        	
-        	HttpClient httpclient = HttpClients.createDefault();
-        	HttpPost httppost = new HttpPost("http://testnet-eu.activeledger.io:5260");
-        	//HttpPost httppost = new HttpPost("http://127.0.0.1:5260");
-        	StringEntity entity=new StringEntity(transactionJson);
-        	entity.setContentType("application/json");
-        	httppost.setEntity(entity);
-        	HttpResponse response = httpclient.execute(httppost);
-        	HttpEntity resp = response.getEntity();
+	public JSONObject onboard(OnboardModel onboardModel,KeyPair keyPair, Encryption encrp) throws Exception
+	{
 
-        	if (resp != null) {
-        		String responseAsString = EntityUtils.toString(response.getEntity());
-        	    System.out.println(responseAsString);
-        	}
+		OnboardTransaction transaction = new OnboardTransaction();
+		OnboardIdentityList identityList = new OnboardIdentityList();
+		Identity identity = new Identity();
+		OnboardTxObject txObject = new OnboardTxObject();
+		
 
-        }
-        catch(Exception e)
-        {
-        	throw new IllegalArgumentException("Exception occurred while onboaring:"+e.getMessage());
-        }
+		identity.setType(encrp.toString());
+
+		// Reading PEM formatted public key in string format
+		//String pubKey = Utility.readFileAsString("pub-key.pem");
+
+		identity.setPublicKey(onboardModel.getPublicKey());
+		identityList.setIdentity(identity);
+
+		txObject.setIdentityList(identityList);
+		txObject.setContract(onboardModel.getContract());
+		txObject.setNamespace(onboardModel.getNamespace());
+
+		transaction.setTxObject(txObject);
+		transaction.setSelfSign(onboardModel.isSelfSign());
+		transaction.setSignature(onboardModel.getSignature());
+
+			
+		logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(transaction));
+		JSONObject jsonObj = new JSONObject(onboardIdentityReq.onBoardIdentity(transaction));
+		logger.debug((jsonObj));
+		return jsonObj;
+	}
+
+
 	
-    }
 
 }

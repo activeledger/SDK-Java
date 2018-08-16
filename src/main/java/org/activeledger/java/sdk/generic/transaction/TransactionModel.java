@@ -6,27 +6,7 @@ import java.util.Map;
 import org.activeledger.java.sdk.key.management.Encryption;
 
 public class TransactionModel {
-	
-//	
-//	private String namespace;
-//	private String contract;
-//	private String inputIdentity;
-//	private String outputIdentity;
-//	private KeyPair keyPair;
-//	private String entry;
-//	private String inputIdentitySymbol;
-//	private Double amount;
-//	private Encryption encrp;
-//	private String version;
-//	private String keyNamespace;
-//	private String name;
-//	private String smartContract;
 
-
-	
-	
-	
-	
 	private TxObjectModel txObject;
 	private boolean selfSign;
 	private Map<String,Object> signature;

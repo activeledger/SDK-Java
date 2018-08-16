@@ -1,92 +1,69 @@
 package org.activeledger.java.sdk.nhpk;
 
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.activeledger.java.sdk.contract.uploading.ContractUploadModel;
-import org.activeledger.java.sdk.contract.uploading.ContractUploading;
-import org.activeledger.java.sdk.contract.uploading.ContractUploadingIdentityList;
-import org.activeledger.java.sdk.contract.uploading.ContractUploadingReq;
-import org.activeledger.java.sdk.contract.uploading.ContractUploadingTransaction;
-import org.activeledger.java.sdk.contract.uploading.ContractUploadingTxObject;
-import org.activeledger.java.sdk.key.management.Encryption;
-import org.activeledger.java.sdk.key.management.KeyGen;
-import org.activeledger.java.sdk.onboard.OnboardIdentityReq;
-import org.activeledger.java.sdk.utility.Utility;
+import org.activeledger.java.sdk.signature.Sign;
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+@Component("NHPK")
 public class NHPK {
 	
+	final static Logger logger = Logger.getLogger(NHPK.class);
 	
 	@Autowired
-	ContractUploadingReq contractUploadingReq;
+	NHPKReq nhpkReq;
 
-	/*@Autowired
-	OnboardIdentityReq onBoardingIdentityReq;
-*/	
+	@Autowired
+	Sign sign;
+	@Value("${transaction.default.namepsace}")
+	private String test;
 	
 	ObjectMapper mapper;
 
 	public NHPK() {
 		mapper = new ObjectMapper();
-	
-		
 	}
 
-	public void nhpk(NHPKModel nhpkModel )
-	{//, KeyPair keyPair,Encryption encrp,String identity
-		//sign the transaction
-		try {
+	public JSONObject nhpk(NHPKModel nhpkModel) throws Exception
+	{
+		
 			NHPKTransaction nhpkTransaction=new NHPKTransaction();
 			NHPKTxObject txObject=new NHPKTxObject();
 			NHPKIdentityList nhpkIdentityList=new NHPKIdentityList();
 			Map<String,NHPKIdentityList> identityMap=new HashMap<>();
-			Map<String,String> signatureMap=new HashMap<>();
-			
 			
 			txObject.setContract(nhpkModel.getContract());
 			txObject.setNamespace(nhpkModel.getNamespace());
-			Utility.writePem("publickey.pem", "PUBLIC KEY", nhpkModel.getKeyPair().getPublic());
-			nhpkIdentityList.setNhpk(Utility.readFileAsString("publickey.pem"));
+			//Utility.writePem("publickey.pem", "PUBLIC KEY", nhpkModel.getKeyPair().getPublic());
+			nhpkIdentityList.setNhpk(nhpkModel.getPublicKey());
 			identityMap.put(nhpkModel.getIdentity(), nhpkIdentityList);
 			txObject.setIdentityList(identityMap);
 			nhpkTransaction.setTxObject(txObject);
+			nhpkTransaction.setSelfSign(nhpkModel.isSelfSign());
+			nhpkTransaction.setSignature(nhpkModel.getSignature());
 			
-			// Sign message and set the signature in the transaction request
-			String signTransactionObject = mapper.writeValueAsString(nhpkTransaction.getTxObject());
-			String signature=OnboardIdentityReq.signMessage(signTransactionObject.getBytes(), nhpkModel.getKeyPair(), nhpkModel.getEncrp());
-			
-			
-			signatureMap.put(nhpkModel.getIdentity(),signature);
-			nhpkTransaction.setSignature(signatureMap);
-			
-			
-			
-			 System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(nhpkTransaction));;
-			
-			//String signature=OnboardIdentityReq.signMessage(signTransactionObject.getBytes());//, keyPair, encrp);
-			 //contractUploadingReq.uploadContract(contractUploadingTransaction);
-			
-			}
-			catch(Exception e)
-			{
-				throw new IllegalArgumentException("Unable to sign object:"+e.getMessage());
-			}
+			logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(nhpkTransaction));;
+			JSONObject jsonObj = new JSONObject( nhpkReq.nhpkTransaction(nhpkTransaction));
+			logger.debug((jsonObj));
+			return jsonObj;
+		
 	}
 	
-	public static void main(String[] args) {
+/*	public static void main(String[] args) {
 	
+		ActiveledgerJavaSdkApplication sdk=new ActiveledgerJavaSdkApplication();
+		AbstractApplicationContext ctx=ActiveledgerJavaSdkApplication.init();
 		NHPKModel nhpkModel=new NHPKModel();
 		nhpkModel.setContract("onboard");
 		nhpkModel.setNamespace("default");
-		nhpkModel.setEncrp(Encryption.RSA);
-		nhpkModel.setIdentity("123456");
+		nhpkModel.setEncrp(Encryption.EC);
+		nhpkModel.setIdentity("23b9f2d6f41061508bef63a7173168bcf2cb1c2e34723c28e37d32deeac1e5b1");
 		
 		
 		KeyGen keygen=new KeyGen();
@@ -99,12 +76,20 @@ public class NHPK {
 		}
 	
 
-		NHPK nhpk=new NHPK();
+		NHPK nhpk = (NHPK) ctx.getBean("NHPK");
 
-		
+		System.out.println("---:"+nhpk.getTest());;
 		nhpk.nhpk(nhpkModel);
 
 	}
+
+	public String getTest() {
+		return test;
+	}
+
+	public void setTest(String test) {
+		this.test = test;
+	}*/
 	
 	
 

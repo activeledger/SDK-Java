@@ -31,8 +31,4 @@ public class OnboardTxObject {
 		this.identityList = identityList;
 	}
 
-	
-
-	
-
 }

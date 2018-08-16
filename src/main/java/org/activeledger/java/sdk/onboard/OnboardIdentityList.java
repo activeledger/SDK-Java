@@ -1,7 +1,5 @@
 package org.activeledger.java.sdk.onboard;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class OnboardIdentityList {
 	
 	private Identity identity;

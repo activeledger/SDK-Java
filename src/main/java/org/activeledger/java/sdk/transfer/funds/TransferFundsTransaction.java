@@ -8,6 +8,8 @@ public class TransferFundsTransaction {
 
 	@JsonProperty("$tx")	
 	private TransferFundsTxObject txObject;
+	@JsonProperty("$selfsign")
+	private boolean selfSign;
 	@JsonProperty("$sigs")
 	private Map<String,String> signature;
 	public TransferFundsTxObject getTxObject() {
@@ -21,6 +23,12 @@ public class TransferFundsTransaction {
 	}
 	public void setSignature(Map<String, String> signature) {
 		this.signature = signature;
+	}
+	public boolean isSelfSign() {
+		return selfSign;
+	}
+	public void setSelfSign(boolean selfSign) {
+		this.selfSign = selfSign;
 	}
 	
 	

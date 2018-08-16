@@ -1,46 +1,38 @@
 package org.activeledger.java.sdk.contract.uploading;
 
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.activeledger.java.sdk.key.management.Encryption;
-import org.activeledger.java.sdk.key.management.KeyGen;
-import org.activeledger.java.sdk.onboard.OnboardIdentityReq;
+import org.activeledger.java.sdk.nhpk.NHPK;
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Component("ContractUploading")
 public class ContractUploading {
+	
+	final static Logger logger = Logger.getLogger(ContractUploading.class);
 	
 	@Autowired
 	ContractUploadingReq contractUploadingReq;
-
-	/*@Autowired
-	OnboardIdentityReq onBoardingIdentityReq;
-*/	
-	
+	@Autowired
+	NHPK nhpk1;
 	ObjectMapper mapper;
 
 	public ContractUploading() {
 		mapper = new ObjectMapper();
-	
-		
 	}
 
-	public void uploadContract(ContractUploadModel contractUploadModel )
-	{//, KeyPair keyPair,Encryption encrp,String identity
-		//sign the transaction
-		try {
+	public JSONObject uploadContract(ContractUploadModel contractUploadModel) throws Exception
+	{
+
 			ContractUploadingTransaction contractUploadingTransaction=new ContractUploadingTransaction();
 			ContractUploadingTxObject txObject=new ContractUploadingTxObject();
 			ContractUploadingIdentityList contractUploadingIdentityList=new ContractUploadingIdentityList();
 			Map<String,ContractUploadingIdentityList> identityMap=new HashMap<>();
-			Map<String,String> signatureMap=new HashMap<>();
-			
 			
 			txObject.setContract(contractUploadModel.getContract());
 			txObject.setNamespace(contractUploadModel.getNamespace());
@@ -51,37 +43,23 @@ public class ContractUploading {
 			identityMap.put(contractUploadModel.getIdentity(), contractUploadingIdentityList);
 			txObject.setIdentityList(identityMap);
 			contractUploadingTransaction.setTxObject(txObject);
+			contractUploadingTransaction.setSelfSign(contractUploadModel.isSelfSign());
+			contractUploadingTransaction.setSignature(contractUploadModel.getSignature());
+	
+			logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(contractUploadingTransaction));;
+			 JSONObject jsonObj = new JSONObject(contractUploadingReq.uploadContract(contractUploadingTransaction));
+			 logger.debug(jsonObj);
+			 return jsonObj;
 			
-			// Sign message and set the signature in the transaction request
-			String signTransactionObject = mapper.writeValueAsString(contractUploadingTransaction.getTxObject());
-			String signature=OnboardIdentityReq.signMessage(signTransactionObject.getBytes(), contractUploadModel.getKeyPair(), contractUploadModel.getEncrp());
-			
-			
-			signatureMap.put(contractUploadModel.getIdentity(),signature);
-			contractUploadingTransaction.setSignature(signatureMap);
-			
-			
-			
-			 System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(contractUploadingTransaction));;
-			
-			//String signature=OnboardIdentityReq.signMessage(signTransactionObject.getBytes());//, keyPair, encrp);
-			 //contractUploadingReq.uploadContract(contractUploadingTransaction);
-			
-			}
-			catch(Exception e)
-			{
-				throw new IllegalArgumentException("Unable to sign object:"+e.getMessage());
-			}
 	}
 	
-	public static void main(String[] args) {
-	
-		ContractUploadModel contractUploadModel=new ContractUploadModel();
-		contractUploadModel.setContract("onboard");
+/*	public static void main(String[] args) {
+	ContractUploadModel contractUploadModel=new ContractUploadModel();
+		contractUploadModel.setContract("contract");
 		contractUploadModel.setNamespace("default");
-		contractUploadModel.setEncrp(Encryption.RSA);
-		contractUploadModel.setIdentity("123456");
-		contractUploadModel.setKeyNamespace("ns1");
+		contractUploadModel.setEncrp(Encryption.EC);
+		contractUploadModel.setIdentity("23b9f2d6f41061508bef63a7173168bcf2cb1c2e34723c28e37d32deeac1e5b1");
+		contractUploadModel.setKeyNamespace("default");
 		
 		KeyGen keygen=new KeyGen();
 		try {
@@ -99,8 +77,8 @@ public class ContractUploading {
 
 		
 		c.uploadContract(contractUploadModel);
-
-	}
+		
+	}*/
 	
 }
 

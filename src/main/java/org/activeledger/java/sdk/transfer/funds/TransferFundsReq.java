@@ -1,48 +1,47 @@
 package org.activeledger.java.sdk.transfer.funds;
 
-import org.activeledger.java.sdk.contract.uploading.ContractUploadingTransaction;
-import org.apache.http.HttpEntity;
+import org.activeledger.java.sdk.connection.Connection;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class TransferFundsReq {
-
+@Component("TransferFundsReq")
+public class TransferFundsReq extends Connection{
+	
+	final static Logger logger = Logger.getLogger(TransferFundsReq.class);
 	ObjectMapper mapper;
 
 	public TransferFundsReq() {
+	
 		mapper = new ObjectMapper();
 	}
 	
-	public void transferFunds(TransferFundsTransaction transferFundsTransaction)
+	public String transferFunds(TransferFundsTransaction transferFundsTransaction)
 	{
-		 //System.out.println("JSON:"+transactionJson);;
+		 
 		try {
-        	System.out.println("Sent transaction:"+mapper.writerWithDefaultPrettyPrinter().writeValueAsString(transferFundsTransaction));
-        	String contractUploadingJson = mapper.writeValueAsString(transferFundsTransaction);
-        	
+			String transferFundsTransactionJson = mapper.writeValueAsString(transferFundsTransaction);
         	HttpClient httpclient = HttpClients.createDefault();
-        	HttpPost httppost = new HttpPost("http://testnet-eu.activeledger.io:5260");
-        	//HttpPost httppost = new HttpPost("http://127.0.0.1:5260");
-        	StringEntity entity=new StringEntity(contractUploadingJson);
+        	HttpPost httppost = new HttpPost(getConnectionURL());
+        	StringEntity entity=new StringEntity(transferFundsTransactionJson);
         	entity.setContentType("application/json");
         	httppost.setEntity(entity);
         	HttpResponse response = httpclient.execute(httppost);
-        	HttpEntity resp = response.getEntity();
-
-        	if (resp != null) {
-        		String responseAsString = EntityUtils.toString(response.getEntity());
-        	    System.out.println(responseAsString);
-        	}
+       
+        	String responseAsString = EntityUtils.toString(response.getEntity());
+        	return responseAsString;
 
         }
         catch(Exception e)
         {
+        	logger.error("Exception occurred while sending transaction",e);
         	throw new IllegalArgumentException("Exception occurred while onboaring:"+e.getMessage());
         }
 	}

@@ -1,7 +1,5 @@
 package org.activeledger.java.sdk.contract.uploading;
 
-import java.util.Map;
-
 public class ContractUploadingIdentityList {
 	
 	private String version;

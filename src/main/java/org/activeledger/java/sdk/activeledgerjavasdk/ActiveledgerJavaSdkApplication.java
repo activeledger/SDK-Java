@@ -26,4 +26,11 @@ public class ActiveledgerJavaSdkApplication {
          
         context.close();
 	}
+	
+	public static AbstractApplicationContext init()  {
+
+		AbstractApplicationContext  context = new AnnotationConfigApplicationContext(AppConfig.class);
+		
+        return context;
+	}
 }
