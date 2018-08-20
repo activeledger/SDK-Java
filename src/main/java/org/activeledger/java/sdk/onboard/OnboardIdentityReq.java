@@ -50,7 +50,7 @@ public class OnboardIdentityReq extends Connection{
         }
         catch(Exception e)
         {
-        	logger.error("Exception occurred while onboaring:",e);
+        	logger.error("Exception occurred while onboaring",e);
         	throw new IllegalArgumentException("Exception occurred while onboaring:"+e.getMessage());
         }
 	

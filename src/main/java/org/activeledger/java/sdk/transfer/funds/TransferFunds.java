@@ -3,9 +3,15 @@ package org.activeledger.java.sdk.transfer.funds;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.activeledger.java.sdk.activeledgerjavasdk.ActiveledgerJavaSdkApplication;
+import org.activeledger.java.sdk.activeledgerjavasdk.AppConfig;
+import org.activeledger.java.sdk.connection.Connection;
+import org.activeledger.java.sdk.key.management.Encryption;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,14 +66,14 @@ public class TransferFunds {
 			
 		logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(transferFundsTransaction));
 		JSONObject jsonObj = new JSONObject(transferFundsReq.transferFunds(transferFundsTransaction));
-		logger.debug((jsonObj));
+		logger.debug((jsonObj.toString(2)));
 		return jsonObj;
 
 		
 	}
 	
 	
-	/*public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		
 		TransferFundsModel transferUploadModel=new TransferFundsModel();
 		transferUploadModel.setContract("fund");
@@ -96,7 +102,7 @@ public class TransferFunds {
 		tf.transferFunds(transferUploadModel);
 		ctx.close();
 
-	}*/
+	}
 	
 		
 }

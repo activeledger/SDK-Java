@@ -11,7 +11,9 @@ public class OnboardModel {
 	private String Identity;
 	private Encryption encrp;
 	private boolean selfSign;
-	private Map<String,String> signature;
+	//private Map<String,String> signature;
+	private Signature signature;
+	
 	private String publicKey;
 	public String getNamespace() {
 		return namespace;
@@ -37,10 +39,11 @@ public class OnboardModel {
 	public void setEncrp(Encryption encrp) {
 		this.encrp = encrp;
 	}
-	public Map<String, String> getSignature() {
+
+	public Signature getSignature() {
 		return signature;
 	}
-	public void setSignature(Map<String, String> signature) {
+	public void setSignature(Signature signature) {
 		this.signature = signature;
 	}
 	public String getPublicKey() {

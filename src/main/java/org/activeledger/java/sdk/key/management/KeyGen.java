@@ -12,7 +12,7 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.spec.ECGenParameterSpec;
 
-import org.activeledger.java.sdk.utility.Utility;
+import org.activeledger.java.sdk.utility.PemFile;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +59,7 @@ public class KeyGen {
 	    		else if(encrp==Encryption.EC){
 	    			keyPair=createSecp256k1KeyPair();
 	    		}
-				PrivateKey priv=keyPair.getPrivate();
+	    		/*PrivateKey priv=keyPair.getPrivate();
 				PublicKey pub=keyPair.getPublic();
 				
 				if(encrp==Encryption.RSA)
@@ -70,13 +70,13 @@ public class KeyGen {
 				{
 					Utility.writePem(PRIVATE_FILE,EC_PRIVATE_FILE_DESC,priv);
 				}
-				Utility.writePem(PUBLIC_FILE,"PUBLIC KEY",pub);
+				Utility.writePem(PUBLIC_FILE,"PUBLIC KEY",pub);*/
 				//onboardIdentiy.onBoardIdentity(keyPair,encrp);
 				return keyPair;
 	    }
 	    
 	    
-		public KeyPair createSecp256k1KeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+		private KeyPair createSecp256k1KeyPair() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
 			logger.debug("Generating EC key pair");
 			 KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(env.getProperty("encryption.type.ec"), "BC");
 			 ECGenParameterSpec ecGenParameterSpec = new ECGenParameterSpec(env.getProperty("ec.curve"));

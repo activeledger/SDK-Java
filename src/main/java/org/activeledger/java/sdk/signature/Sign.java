@@ -4,12 +4,10 @@ import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Signature;
-import java.security.spec.PKCS8EncodedKeySpec;
 
 import javax.xml.bind.DatatypeConverter;
 
 import org.activeledger.java.sdk.key.management.Encryption;
-import org.activeledger.java.sdk.utility.PemFile;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +36,7 @@ public class Sign {
 			throw new IllegalArgumentException("Unable to get Signature Instance");
 		}
 
-		PrivateKey pk = generatePrivateKey(factory, "PRIVATE_KEY");
+		PrivateKey pk = keyPair.getPrivate();//generatePrivateKey(factory, "PRIVATE_KEY");
 
 		try {
 			sign.initSign(pk);
@@ -49,13 +47,13 @@ public class Sign {
 			return DatatypeConverter.printBase64Binary(signature);
 		} catch (Exception e) {
 			logger.error("Unable to sign the object",e);
-			throw new IllegalArgumentException("Unable to sign the object:" + e.getMessage());
+			throw new IllegalArgumentException("Unable to sign the object:"+e.getMessage());
 		}
 
 	}
 
 	//////////////////// Generate private key from file////////////////////
-	private static PrivateKey generatePrivateKey(KeyFactory factory, String filename) {
+/*	private static PrivateKey generatePrivateKey(KeyFactory factory, String filename) {
 
 		try {
 
@@ -69,7 +67,7 @@ public class Sign {
 			throw new IllegalArgumentException("Error in generating private key:" + e.getMessage());
 		}
 
-	}
+	}*/
 	
 	/*
 	 * private static PublicKey generatePublicKey(KeyFactory factory, String

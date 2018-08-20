@@ -15,8 +15,8 @@ private OnboardTxObject txObject;
 @JsonProperty("$selfsign")
 private boolean selfSign;
 @JsonProperty("$sigs")
-private Map<String,String> signature;
-
+//private Map<String,String> signature;
+private Signature signature;
 public OnboardTxObject getTxObject() {
 	return txObject;
 }
@@ -29,12 +29,13 @@ public boolean isSelfSign() {
 public void setSelfSign(boolean selfSign) {
 	this.selfSign = selfSign;
 }
-public Map<String, String> getSignature() {
+public Signature getSignature() {
 	return signature;
 }
-public void setSignature(Map<String, String> signature) {
+public void setSignature(Signature signature) {
 	this.signature = signature;
 }
+
 
 
 }
