@@ -30,10 +30,10 @@ public class NHPK {
 		mapper = new ObjectMapper();
 	}
 
-	public JSONObject nhpk(NHPKModel nhpkModel) throws Exception
+	public JSONObject nhpk(NHPKTransaction nhpkTransaction) throws Exception
 	{
 		
-			NHPKTransaction nhpkTransaction=new NHPKTransaction();
+			/*NHPKTransaction nhpkTransaction=new NHPKTransaction();
 			NHPKTxObject txObject=new NHPKTxObject();
 			NHPKIdentityList nhpkIdentityList=new NHPKIdentityList();
 			Map<String,NHPKIdentityList> identityMap=new HashMap<>();
@@ -47,7 +47,7 @@ public class NHPK {
 			nhpkTransaction.setTxObject(txObject);
 			nhpkTransaction.setSelfSign(nhpkModel.isSelfSign());
 			nhpkTransaction.setSignature(nhpkModel.getSignature());
-			
+			*/
 			logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(nhpkTransaction));;
 			JSONObject jsonObj = new JSONObject( nhpkReq.nhpkTransaction(nhpkTransaction));
 			logger.debug((jsonObj));

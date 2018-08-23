@@ -32,10 +32,10 @@ public class TransferFunds {
 	}
 	
 	
-	public JSONObject transferFunds(TransferFundsModel transferFundsModel) throws Exception
+	public JSONObject transferFunds(TransferFundsTransaction transferFundsTransaction) throws Exception
 	{
 	
-		TransferFundsTransaction transferFundsTransaction=new TransferFundsTransaction();
+		/*TransferFundsTransaction transferFundsTransaction=new TransferFundsTransaction();
 		TransferFundsTxObject transferFundsTxObject=new TransferFundsTxObject();
 		Map<String,TransferFundsIdentity> inputIdentityMap=new HashMap<>();
 		Map<String,TransferFundsIdentity> outputIdentityMap=new HashMap<>();
@@ -61,7 +61,7 @@ public class TransferFunds {
 		transferFundsTransaction.setSelfSign(transferFundsModel.isSelfSign());
 		
 		transferFundsTransaction.setSignature(transferFundsModel.getSignature());
-
+*/
 	
 			
 		logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(transferFundsTransaction));
@@ -73,7 +73,7 @@ public class TransferFunds {
 	}
 	
 	
-	public static void main(String[] args) throws Exception {
+	/*public static void main(String[] args) throws Exception {
 		
 		TransferFundsModel transferUploadModel=new TransferFundsModel();
 		transferUploadModel.setContract("fund");
@@ -102,7 +102,7 @@ public class TransferFunds {
 		tf.transferFunds(transferUploadModel);
 		ctx.close();
 
-	}
+	}*/
 	
 		
 }

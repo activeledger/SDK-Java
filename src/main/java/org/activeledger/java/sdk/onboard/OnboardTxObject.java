@@ -1,5 +1,7 @@
 package org.activeledger.java.sdk.onboard;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -12,7 +14,7 @@ public class OnboardTxObject {
 	@JsonProperty("$contract")
 	private String contract;
 	@JsonProperty("$i")
-	private OnboardIdentityList identityList;
+	private Map<String,Identity> identityList;
 	
 	
 	public String getNamespace() {
@@ -27,11 +29,12 @@ public class OnboardTxObject {
 	public void setContract(String contract) {
 		this.contract = contract;
 	}
-	public OnboardIdentityList getIdentityList() {
+	public Map<String, Identity> getIdentityList() {
 		return identityList;
 	}
-	public void setIdentityList(OnboardIdentityList identityList) {
+	public void setIdentityList(Map<String, Identity> identityList) {
 		this.identityList = identityList;
 	}
+
 
 }

@@ -26,10 +26,10 @@ public class ContractUploading {
 		mapper = new ObjectMapper();
 	}
 
-	public JSONObject uploadContract(ContractUploadModel contractUploadModel) throws Exception
+	public JSONObject uploadContract(ContractUploadingTransaction contractUploadingTransaction) throws Exception
 	{
 
-			ContractUploadingTransaction contractUploadingTransaction=new ContractUploadingTransaction();
+			/*ContractUploadingTransaction contractUploadingTransaction=new ContractUploadingTransaction();
 			ContractUploadingTxObject txObject=new ContractUploadingTxObject();
 			ContractUploadingIdentityList contractUploadingIdentityList=new ContractUploadingIdentityList();
 			Map<String,ContractUploadingIdentityList> identityMap=new HashMap<>();
@@ -44,7 +44,7 @@ public class ContractUploading {
 			txObject.setIdentityList(identityMap);
 			contractUploadingTransaction.setTxObject(txObject);
 			contractUploadingTransaction.setSelfSign(contractUploadModel.isSelfSign());
-			contractUploadingTransaction.setSignature(contractUploadModel.getSignature());
+			contractUploadingTransaction.setSignature(contractUploadModel.getSignature());*/
 	
 			logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(contractUploadingTransaction));;
 			 JSONObject jsonObj = new JSONObject(contractUploadingReq.uploadContract(contractUploadingTransaction));

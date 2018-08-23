@@ -13,6 +13,8 @@ public class TxObject {
 	private String namespace;
 	@JsonProperty("$contract")
 	private String contract;
+	@JsonProperty("$entry")
+	private String entry;
 	@JsonProperty("$i")
 	private Map<String,Object> inputIdentity;
 	@JsonProperty("$o")
@@ -50,6 +52,12 @@ public class TxObject {
 	}
 	public void setStreamState(Map<String, Object> streamState) {
 		this.streamState = streamState;
+	}
+	public String getEntry() {
+		return entry;
+	}
+	public void setEntry(String entry) {
+		this.entry = entry;
 	}
 
 	

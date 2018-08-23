@@ -1,14 +1,18 @@
 package org.activeledger.java.sdk.onboard;
 
+import org.activeledger.java.sdk.key.management.Encryption;
+
 public class Identity {
 
 
 	private String publicKey;
-	private String type;
-	public String getType() {
+	private Encryption type;
+	
+	
+	public Encryption getType() {
 		return type;
 	}
-	public void setType(String type) {
+	public void setType(Encryption type) {
 		this.type = type;
 	}
 	public String getPublicKey() {

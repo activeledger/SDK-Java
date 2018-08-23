@@ -59,7 +59,7 @@ public class PemFile {
 		}
 	}
 	
-	public String convertToStringPemFormat(Key key)
+	public static String convertToStringPemFormat(Key key)
 	{
 		try {
 			writePem(FILENAME,DESC,key);
