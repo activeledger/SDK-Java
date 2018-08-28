@@ -1,16 +1,11 @@
 package org.activeledger.java.sdk.onboard;
 
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.activeledger.java.sdk.activeledgerjavasdk.ActiveledgerJavaSdkApplication;
 import org.activeledger.java.sdk.key.management.Encryption;
-import org.activeledger.java.sdk.key.management.KeyGen;
 import org.activeledger.java.sdk.signature.Sign;
 import org.activeledger.java.sdk.utility.PemFile;
 import org.apache.log4j.Logger;
@@ -29,7 +24,7 @@ public class OnboardIdentity {
 	final static Logger logger = Logger.getLogger(OnboardIdentity.class);
 
 	@Autowired
-	OnboardIdentityReq onboardIdentityReq;
+	private OnboardIdentityReq onboardIdentityReq;
 	@Autowired
 	private Environment env;
 	
@@ -66,8 +61,6 @@ public class OnboardIdentity {
 		onboardTransaction.setTxObject(txObject);
 		onboardTransaction.setSelfSign(true);
 		
-		
-		
 		logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(onboardTransaction));
 		JSONObject jsonObj = new JSONObject(onboardIdentityReq.onBoardIdentity(onboardTransaction));
 		logger.debug((jsonObj));
@@ -75,15 +68,4 @@ public class OnboardIdentity {
 		
 	}
 	
-/*	public static void main(String []args) throws Exception
-	{
-		AbstractApplicationContext ctx=ActiveledgerJavaSdkApplication.getContext();
-		KeyGen key=(KeyGen)ctx.getBean("KeyGen");
-		KeyPair keyPair=key.generateKeyPair(Encryption.RSA);
-		
-		OnboardIdentity onboardIdentity=(OnboardIdentity)ctx.getBean("OnboardIdentity");
-		onboardIdentity.onboard(keyPair, Encryption.RSA, "nomi");
-	}*/
-	
-
 }
