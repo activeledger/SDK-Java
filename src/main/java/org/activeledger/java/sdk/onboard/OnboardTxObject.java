@@ -2,15 +2,21 @@ package org.activeledger.java.sdk.onboard;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import javax.ws.rs.DefaultValue;
 
-@JsonInclude(Include.NON_NULL)
+import org.springframework.beans.factory.annotation.Value;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+
 public class OnboardTxObject {
+
 
 	@JsonProperty("$namespace")
 	private String namespace;
+
 	@JsonProperty("$contract")
 	private String contract;
 	@JsonProperty("$i")

@@ -4,14 +4,18 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 @JsonInclude(Include.NON_NULL)
 public class TxObjectModel {
 	
 	private String namespace;
 	private String contract;
+	private String entry;
 	private Map<String,Object> inputIdentity;
+
 	private Map<String,Object> outputIdentity;
+
 	private Map<String,Object> streamState;
 	
 	public String getNamespace() {

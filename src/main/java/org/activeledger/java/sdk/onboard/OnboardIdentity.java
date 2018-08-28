@@ -1,9 +1,23 @@
 package org.activeledger.java.sdk.onboard;
 
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.activeledger.java.sdk.activeledgerjavasdk.ActiveledgerJavaSdkApplication;
 import org.activeledger.java.sdk.key.management.Encryption;
+import org.activeledger.java.sdk.key.management.KeyGen;
+import org.activeledger.java.sdk.signature.Sign;
+import org.activeledger.java.sdk.utility.PemFile;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +30,8 @@ public class OnboardIdentity {
 
 	@Autowired
 	OnboardIdentityReq onboardIdentityReq;
+	@Autowired
+	private Environment env;
 	
 	ObjectMapper mapper;
 
@@ -26,14 +42,48 @@ public class OnboardIdentity {
 
 	
 
-	public JSONObject onboard(OnboardTransaction onboardTransaction,Encryption encrp) throws Exception
+	public JSONObject onboard(KeyPair keyPair,Encryption encrp,String keyName) throws Exception
 	{
+		
+		
+		OnboardTransaction onboardTransaction=new OnboardTransaction();
+		OnboardTxObject txObject=new OnboardTxObject();
+		Identity identity=new Identity();
+		identity.setType(encrp);
+		identity.setPublicKey(PemFile.convertToStringPemFormat(keyPair.getPublic()));
+		Map<String ,Identity> inputIdentity=new HashMap<>();
+		Map<String ,String> signature=new HashMap<>();
+		inputIdentity.put(keyName, identity);
+		txObject.setIdentityList(inputIdentity);
+		txObject.setContract(env.getProperty("onboard.contract"));
+		txObject.setNamespace(env.getProperty("onboard.namespace"));
+		AbstractApplicationContext ctx=ActiveledgerJavaSdkApplication.getContext();
+		Sign sign=(Sign)ctx.getBean("Sign");
+		String txObjectJson=mapper.writeValueAsString(txObject);
+		String signed=sign.signMessage(txObjectJson.getBytes(), keyPair, encrp);
+		signature.put(keyName, signed);
+		onboardTransaction.setSignature(signature);
+		onboardTransaction.setTxObject(txObject);
+		onboardTransaction.setSelfSign(true);
+		
+		
+		
 		logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(onboardTransaction));
 		JSONObject jsonObj = new JSONObject(onboardIdentityReq.onBoardIdentity(onboardTransaction));
 		logger.debug((jsonObj));
 		return jsonObj;
+		
 	}
 	
+/*	public static void main(String []args) throws Exception
+	{
+		AbstractApplicationContext ctx=ActiveledgerJavaSdkApplication.getContext();
+		KeyGen key=(KeyGen)ctx.getBean("KeyGen");
+		KeyPair keyPair=key.generateKeyPair(Encryption.RSA);
+		
+		OnboardIdentity onboardIdentity=(OnboardIdentity)ctx.getBean("OnboardIdentity");
+		onboardIdentity.onboard(keyPair, Encryption.RSA, "nomi");
+	}*/
 	
 
 }

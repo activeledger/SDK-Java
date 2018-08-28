@@ -6,10 +6,10 @@ import org.springframework.context.support.AbstractApplicationContext;
 
 
 public class ActiveledgerJavaSdkApplication {
-
+	static AbstractApplicationContext  context;
 	public static AbstractApplicationContext init()  {
 
-		AbstractApplicationContext  context = new AnnotationConfigApplicationContext(AppConfig.class);
+	  context = new AnnotationConfigApplicationContext(AppConfig.class);
 		
         return context;
 	}
@@ -20,5 +20,12 @@ public class ActiveledgerJavaSdkApplication {
 		Connection.setUrl(url);
 		Connection.setPort(port);
 		
+	}
+	
+	public static AbstractApplicationContext getContext()
+	{
+		if(context==null)
+			context=ActiveledgerJavaSdkApplication.init();
+		return context;
 	}
 }
