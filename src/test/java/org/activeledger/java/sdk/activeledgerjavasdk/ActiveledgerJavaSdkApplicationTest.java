@@ -75,12 +75,17 @@ public class ActiveledgerJavaSdkApplicationTest {
 		Map<String,Object> outputIdentityMap=new HashMap<>();
 		Map<String,Object> outputIdentityMap_1=new HashMap<>();//instead of map jsonObject can be used
 		Map<String,Object> signature=new HashMap<>();
+		
+		//onboarding first identity
 		OnboardIdentity onboardIdentity=(OnboardIdentity)ctx.getBean("OnboardIdentity");
 		JSONObject inJson=onboardIdentity.onboard(keyPair, Encryption.RSA, "firstkey");
 		String inputIdentity=parseJson(inJson).get("id");
-		JSONObject outJson=onboardIdentity.onboard(keyPair, Encryption.RSA, "firstkey");
 		
+		//onboarding second identity
+		JSONObject outJson=onboardIdentity.onboard(keyPair, Encryption.RSA, "firstkey");
 		String outputIdentity=parseJson(outJson).get("id");
+		
+		
 		txObject.setContract("df9f84846ace992d7aa13b8f7d4295b4a0d54f178e0059d96208dd1b2183b297");//contract stream id
 		txObject.setNamespace("ns2");
 		inputIdentityMap_1.put("symbol","usd");
