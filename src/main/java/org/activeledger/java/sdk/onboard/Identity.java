@@ -6,13 +6,14 @@ public class Identity {
 
 
 	private String publicKey;
-	private Encryption type;
+	private String type;
 	
 	
-	public Encryption getType() {
+
+	public String getType() {
 		return type;
 	}
-	public void setType(Encryption type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 	public String getPublicKey() {

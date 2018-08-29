@@ -19,16 +19,14 @@ public class GenericTransaction {
 
 	public GenericTransaction() {
 		mapper = new ObjectMapper();
-	
-		
 	}
 
 	public JSONObject transaction(Transaction transaction) throws Exception
 	{
 
-			logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(transaction));
+		//	logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(transaction));
 			JSONObject jsonObj = new JSONObject(transactionReq.transaction(transaction));
-			logger.debug(jsonObj.toString());
+		//	logger.debug(jsonObj.toString());
 			return jsonObj;
 	}
 	

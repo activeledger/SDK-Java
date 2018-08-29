@@ -25,9 +25,9 @@ final static Logger logger = Logger.getLogger(TransactionReq.class);
 	
 	public String transaction(Transaction transaction)
 	{
-		 //System.out.println("JSON:"+transactionJson);;
+
 		try {
-        	System.out.println("Sent transaction:"+mapper.writerWithDefaultPrettyPrinter().writeValueAsString(transaction));
+        	
         	String contractUploadingJson = mapper.writeValueAsString(transaction);
         	
         	HttpClient httpclient = HttpClients.createDefault();

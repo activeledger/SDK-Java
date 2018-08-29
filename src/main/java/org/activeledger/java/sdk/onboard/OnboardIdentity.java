@@ -44,7 +44,11 @@ public class OnboardIdentity {
 		OnboardTransaction onboardTransaction=new OnboardTransaction();
 		OnboardTxObject txObject=new OnboardTxObject();
 		Identity identity=new Identity();
-		identity.setType(encrp);
+		if(encrp==Encryption.RSA)
+		identity.setType(encrp.toString().toLowerCase());
+		else
+		identity.setType(env.getProperty("ec.curve"));
+			
 		identity.setPublicKey(PemFile.convertToStringPemFormat(keyPair.getPublic()));
 		Map<String ,Identity> inputIdentity=new HashMap<>();
 		Map<String ,String> signature=new HashMap<>();
@@ -54,6 +58,7 @@ public class OnboardIdentity {
 		txObject.setNamespace(env.getProperty("onboard.namespace"));
 		AbstractApplicationContext ctx=ActiveledgerJavaSdkApplication.getContext();
 		Sign sign=(Sign)ctx.getBean("Sign");
+		
 		String txObjectJson=mapper.writeValueAsString(txObject);
 		String signed=sign.signMessage(txObjectJson.getBytes(), keyPair, encrp);
 		signature.put(keyName, signed);
@@ -61,9 +66,8 @@ public class OnboardIdentity {
 		onboardTransaction.setTxObject(txObject);
 		onboardTransaction.setSelfSign(true);
 		
-		logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(onboardTransaction));
 		JSONObject jsonObj = new JSONObject(onboardIdentityReq.onBoardIdentity(onboardTransaction));
-		logger.debug((jsonObj));
+		
 		return jsonObj;
 		
 	}
