@@ -4,7 +4,8 @@ Welcome to Java SDK for Activeledger. This SDK facilitates the user in sending t
 
 ## Prerequisites
 
-- Java 1.8
+- JDK 1.8 or above
+- Apache Maven 3.7.0
 
 ## Installing
 
