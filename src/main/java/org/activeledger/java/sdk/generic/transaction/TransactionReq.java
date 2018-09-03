@@ -13,43 +13,38 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component("TransactionReq")
-public class TransactionReq extends Connection {
-	
-final static Logger logger = Logger.getLogger(TransactionReq.class);
-	
+public class TransactionReq {
+
+	private static final Logger logger = Logger.getLogger(TransactionReq.class);
+
 	ObjectMapper mapper;
 
 	public TransactionReq() {
 		mapper = new ObjectMapper();
 	}
-	
-	public String transaction(Transaction transaction)
-	{
+
+	public String transaction(Transaction transaction) {
 
 		try {
-        	
-        	String contractUploadingJson = mapper.writeValueAsString(transaction);
-        	
-        	HttpClient httpclient = HttpClients.createDefault();
-        	HttpPost httppost = new HttpPost(getConnectionURL());
-  
-        	StringEntity entity=new StringEntity(contractUploadingJson);
-        	entity.setContentType("application/json");
-        	httppost.setEntity(entity);
-        	HttpResponse response = httpclient.execute(httppost);
 
-        	String responseAsString = EntityUtils.toString(response.getEntity());
+			String contractUploadingJson = mapper.writeValueAsString(transaction);
 
-        	return responseAsString;
+			HttpClient httpclient = HttpClients.createDefault();
+			HttpPost httppost = new HttpPost(Connection.getConnectionURL());
 
-        }
-        catch(Exception e)
-        {
-        	logger.error("Exception occurred while sending transaction",e);
-        	throw new IllegalArgumentException("Exception occurred while sending transaction"+e.getMessage());
-        }
+			StringEntity entity = new StringEntity(contractUploadingJson);
+			entity.setContentType("application/json");
+			httppost.setEntity(entity);
+			HttpResponse response = httpclient.execute(httppost);
+
+			String responseAsString = EntityUtils.toString(response.getEntity());
+
+			return responseAsString;
+
+		} catch (Exception e) {
+			logger.error("Exception occurred while sending transaction", e);
+			throw new IllegalArgumentException("Exception occurred while sending transaction" + e.getMessage());
+		}
 	}
-
-
 
 }

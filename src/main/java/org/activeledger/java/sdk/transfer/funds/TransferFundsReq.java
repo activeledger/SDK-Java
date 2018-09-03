@@ -13,37 +13,34 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component("TransferFundsReq")
-public class TransferFundsReq extends Connection{
-	
-	final static Logger logger = Logger.getLogger(TransferFundsReq.class);
+public class TransferFundsReq {
+
+	private static final Logger logger = Logger.getLogger(TransferFundsReq.class);
 	ObjectMapper mapper;
 
 	public TransferFundsReq() {
-	
+
 		mapper = new ObjectMapper();
 	}
-	
-	public String transferFunds(TransferFundsTransaction transferFundsTransaction)
-	{
-		 
+
+	public String transferFunds(TransferFundsTransaction transferFundsTransaction) {
+
 		try {
 			String transferFundsTransactionJson = mapper.writeValueAsString(transferFundsTransaction);
-        	HttpClient httpclient = HttpClients.createDefault();
-        	HttpPost httppost = new HttpPost(getConnectionURL());
-        	StringEntity entity=new StringEntity(transferFundsTransactionJson);
-        	entity.setContentType("application/json");
-        	httppost.setEntity(entity);
-        	HttpResponse response = httpclient.execute(httppost);
-       
-        	String responseAsString = EntityUtils.toString(response.getEntity());
-        	return responseAsString;
+			HttpClient httpclient = HttpClients.createDefault();
+			HttpPost httppost = new HttpPost(Connection.getConnectionURL());
+			StringEntity entity = new StringEntity(transferFundsTransactionJson);
+			entity.setContentType("application/json");
+			httppost.setEntity(entity);
+			HttpResponse response = httpclient.execute(httppost);
 
-        }
-        catch(Exception e)
-        {
-        	logger.error("Exception occurred while sending transaction",e);
-        	throw new IllegalArgumentException("Exception occurred while onboaring:"+e.getMessage());
-        }
+			String responseAsString = EntityUtils.toString(response.getEntity());
+			return responseAsString;
+
+		} catch (Exception e) {
+			logger.error("Exception occurred while sending transaction", e);
+			throw new IllegalArgumentException("Exception occurred while onboaring:" + e.getMessage());
+		}
 	}
 
 }

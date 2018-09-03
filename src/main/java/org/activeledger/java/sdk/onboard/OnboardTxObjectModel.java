@@ -2,16 +2,11 @@ package org.activeledger.java.sdk.onboard;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+public class OnboardTxObjectModel {
 
-public class OnboardTxObject {
-
-	@JsonProperty("$namespace")
 	private String namespace;
-	@JsonProperty("$contract")
 	private String contract;
-	@JsonProperty("$i")
-	private Map<String, Identity> identityList;
+	private Map<String, Identity> Identity;
 
 	public String getNamespace() {
 		return namespace;
@@ -29,12 +24,12 @@ public class OnboardTxObject {
 		this.contract = contract;
 	}
 
-	public Map<String, Identity> getIdentityList() {
-		return identityList;
+	public Map<String, Identity> getIdentity() {
+		return Identity;
 	}
 
-	public void setIdentityList(Map<String, Identity> identityList) {
-		this.identityList = identityList;
+	public void setIdentity(Map<String, Identity> identity) {
+		Identity = identity;
 	}
 
 }

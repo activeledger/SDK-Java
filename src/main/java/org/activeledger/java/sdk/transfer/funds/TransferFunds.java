@@ -9,30 +9,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component("TransferFunds")
 public class TransferFunds {
-	
-	final static Logger logger = Logger.getLogger(TransferFunds.class);
-	
+
+	private static final Logger logger = Logger.getLogger(TransferFunds.class);
+
 	@Autowired
 	TransferFundsReq transferFundsReq;
-	
+
 	ObjectMapper mapper;
 
 	public TransferFunds() {
 		mapper = new ObjectMapper();
-		
+
 	}
-	
-	
-	public JSONObject transferFunds(TransferFundsTransaction transferFundsTransaction) throws Exception
-	{
-	
-			
+
+	public JSONObject transferFunds(TransferFundsTransaction transferFundsTransaction) throws Exception {
+
 		logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(transferFundsTransaction));
 		JSONObject jsonObj = new JSONObject(transferFundsReq.transferFunds(transferFundsTransaction));
 		logger.debug((jsonObj.toString(2)));
 		return jsonObj;
 
-		
 	}
-		
+
 }

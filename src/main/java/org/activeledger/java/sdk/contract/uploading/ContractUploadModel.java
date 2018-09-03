@@ -17,79 +17,94 @@ public class ContractUploadModel {
 	private String name;
 	private String smartContract;
 	private Encryption encrp;
-	Map<String,String> signature;
-	
-	
+	Map<String, String> signature;
+
 	public Map<String, String> getSignature() {
 		return signature;
 	}
+
 	public void setSignature(Map<String, String> signature) {
 		this.signature = signature;
 	}
+
 	public String getNamespace() {
 		return namespace;
 	}
+
 	public void setNamespace(String namespace) {
 		this.namespace = namespace;
 	}
+
 	public String getContract() {
 		return contract;
 	}
+
 	public void setContract(String contract) {
 		this.contract = contract;
 	}
+
 	public String getIdentity() {
 		return Identity;
 	}
+
 	public void setIdentity(String identity) {
 		Identity = identity;
 	}
+
 	public KeyPair getKeyPair() {
 		return keyPair;
 	}
+
 	public void setKeyPair(KeyPair keyPair) {
 		this.keyPair = keyPair;
 	}
+
 	public String getVersion() {
 		return version;
 	}
+
 	public void setVersion(String version) {
 		this.version = version;
 	}
+
 	public String getKeyNamespace() {
 		return keyNamespace;
 	}
+
 	public void setKeyNamespace(String keyNamespace) {
 		this.keyNamespace = keyNamespace;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getSmartContract() {
 		return smartContract;
 	}
+
 	public void setSmartContract(String smartContract) {
 		this.smartContract = smartContract;
 	}
+
 	public Encryption getEncrp() {
 		return encrp;
 	}
+
 	public void setEncrp(Encryption encrp) {
 		this.encrp = encrp;
 	}
+
 	public boolean isSelfSign() {
 		return selfSign;
 	}
+
 	public void setSelfSign(boolean selfSign) {
 		this.selfSign = selfSign;
 	}
-	
-	
-	
-	
-	
-	
+
 }

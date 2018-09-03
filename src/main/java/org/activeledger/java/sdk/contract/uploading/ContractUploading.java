@@ -10,9 +10,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component("ContractUploading")
 public class ContractUploading {
-	
-	final static Logger logger = Logger.getLogger(ContractUploading.class);
-	
+
+	private static final Logger logger = Logger.getLogger(ContractUploading.class);
+
 	@Autowired
 	ContractUploadingReq contractUploadingReq;
 	@Autowired
@@ -23,16 +23,13 @@ public class ContractUploading {
 		mapper = new ObjectMapper();
 	}
 
-	public JSONObject uploadContract(ContractUploadingTransaction contractUploadingTransaction) throws Exception
-	{
+	public JSONObject uploadContract(ContractUploadingTransaction contractUploadingTransaction) throws Exception {
 
-			logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(contractUploadingTransaction));;
-			 JSONObject jsonObj = new JSONObject(contractUploadingReq.uploadContract(contractUploadingTransaction));
-			 logger.debug(jsonObj);
-			 return jsonObj;
-			
+		logger.debug(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(contractUploadingTransaction));
+		JSONObject jsonObj = new JSONObject(contractUploadingReq.uploadContract(contractUploadingTransaction));
+		logger.debug(jsonObj);
+		return jsonObj;
+
 	}
-	
 
 }
-

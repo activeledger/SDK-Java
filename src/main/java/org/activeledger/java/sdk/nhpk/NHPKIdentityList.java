@@ -14,8 +14,5 @@ public class NHPKIdentityList {
 	public void setNhpk(String nhpk) {
 		this.nhpk = nhpk;
 	}
-	
-	
-	
-	
+
 }

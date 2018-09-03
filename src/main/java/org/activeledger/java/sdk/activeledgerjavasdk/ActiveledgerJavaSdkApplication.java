@@ -4,28 +4,31 @@ import org.activeledger.java.sdk.connection.Connection;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
-
 public class ActiveledgerJavaSdkApplication {
-	static AbstractApplicationContext  context;
-	public static AbstractApplicationContext init()  {
+	private static AbstractApplicationContext context;
 
-	  context = new AnnotationConfigApplicationContext(AppConfig.class);
-		
-        return context;
+	private ActiveledgerJavaSdkApplication() {
 	}
-	
-	public static void setConnection(String protocol,String url,String port)  {
+
+	public static AbstractApplicationContext init() {
+
+		context = new AnnotationConfigApplicationContext(AppConfig.class);
+
+		return context;
+	}
+
+	public static void setConnection(String protocol, String url, String port) {
 
 		Connection.setProtocol(protocol);
 		Connection.setUrl(url);
 		Connection.setPort(port);
-		
+
 	}
-	
-	public static AbstractApplicationContext getContext()
-	{
-		if(context==null)
-			context=ActiveledgerJavaSdkApplication.init();
+
+	public static AbstractApplicationContext getContext() {
+		if (context == null) {
+			context = ActiveledgerJavaSdkApplication.init();
+		}
 		return context;
 	}
 }

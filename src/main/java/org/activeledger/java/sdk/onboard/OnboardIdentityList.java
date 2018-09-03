@@ -1,19 +1,17 @@
 package org.activeledger.java.sdk.onboard;
 
-public class OnboardIdentityList {
-	
-	private Identity identity;
+import java.util.Map;
 
-	public Identity getIdentity() {
+public class OnboardIdentityList {
+
+	private Map<String, Object> identity;
+
+	public Map<String, Object> getIdentity() {
 		return identity;
 	}
 
-	public void setIdentity(Identity identity) {
+	public void setIdentity(Map<String, Object> identity) {
 		this.identity = identity;
 	}
 
-
-	
-	
-	
 }
