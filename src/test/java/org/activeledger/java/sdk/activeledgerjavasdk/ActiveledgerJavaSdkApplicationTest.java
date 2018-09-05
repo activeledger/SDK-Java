@@ -68,7 +68,7 @@ public class ActiveledgerJavaSdkApplicationTest {
 	@Test
 	public void transferFundsTransactionTest() throws Exception {
 		KeyPair firstKeyPair = generateRSAkeyPair();
-		KeyPair secondKeyPair = generateRSAkeyPair();
+		KeyPair secondKeyPair = generateECDSAkeyPair();
 		Transaction transaction = new Transaction();
 		TxObject txObject = new TxObject();
 		Map<String, Object> inputIdentityMap = new HashMap<>();
@@ -83,7 +83,7 @@ public class ActiveledgerJavaSdkApplicationTest {
 		String inputIdentity = parseJson(inJson).get("id");
 
 		// onboarding second identity
-		JSONObject outJson = onboardIdentity.onboard(secondKeyPair, Encryption.RSA, "secondkey");
+		JSONObject outJson = onboardIdentity.onboard(secondKeyPair, Encryption.EC, "secondkey");
 		String outputIdentity = parseJson(outJson).get("id");
 
 		txObject.setContract("df9f84846ace992d7aa13b8f7d4295b4a0d54f178e0059d96208dd1b2183b297"); // sample contract
