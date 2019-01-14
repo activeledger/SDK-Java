@@ -1,3 +1,25 @@
+/*
+ * MIT License (MIT)
+ * Copyright (c) 2018
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package org.activeledger.java.sdk.generic.transaction;
 
 import org.activeledger.java.sdk.connection.Connection;
@@ -23,16 +45,21 @@ public class TransactionReq {
 		mapper = new ObjectMapper();
 	}
 
+	/*
+	 * Send transaction to active ledger using http client
+	 * input: transaction object 
+	 * 
+	 */
 	public String transaction(Transaction transaction) {
 
 		try {
 
-			String contractUploadingJson = mapper.writeValueAsString(transaction);
+			String transactionJson = mapper.writeValueAsString(transaction);
 
 			HttpClient httpclient = HttpClients.createDefault();
 			HttpPost httppost = new HttpPost(Connection.getConnectionURL());
-
-			StringEntity entity = new StringEntity(contractUploadingJson);
+			
+			StringEntity entity = new StringEntity(transactionJson);
 			entity.setContentType("application/json");
 			httppost.setEntity(entity);
 			HttpResponse response = httpclient.execute(httppost);

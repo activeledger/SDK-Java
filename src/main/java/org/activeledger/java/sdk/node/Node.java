@@ -20,58 +20,80 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.activeledger.java.sdk.onboard;
+package org.activeledger.java.sdk.node;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.activeledger.java.sdk.connection.Connection;
+import org.activeledger.java.sdk.generic.transaction.TransactionReq;
+import org.activeledger.java.sdk.utility.Parsing;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
+import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Component("OnboardIdentityReq")
-public class OnboardIdentityReq {
+public class Node {
 
-	private static final Logger logger = Logger.getLogger(OnboardIdentityReq.class);
+	private static final Logger logger = Logger.getLogger(TransactionReq.class);
 
 	ObjectMapper mapper;
+	Parsing parsing;
 
-	public OnboardIdentityReq() {
+	public Node() {
 		mapper = new ObjectMapper();
+		parsing=new Parsing();
 	}
 
 	/*
-	 * Sending the transaction to Activeledger
-	 * input: OnboardingTransaction object
-	 * output: JSONString containing the identity
+	 * Send transaction to active ledger using http client
+	 * input: transaction object 
+	 * 
 	 */
-	public String onBoardIdentity(OnboardTransaction transaction) {
+	public List<String> getNodeReferences() {
 
 		try {
-			String transactionJson = mapper.writeValueAsString(transaction);
-
+			
+			List<String> references=new ArrayList<>();
+			//
 			HttpClient httpclient = HttpClients.createDefault();
-			HttpPost httppost = new HttpPost(Connection.getConnectionURL());
-
-			StringEntity entity = new StringEntity(transactionJson);
-			entity.setContentType("application/json");
-			httppost.setEntity(entity);
-			HttpResponse response = httpclient.execute(httppost);
+			HttpGet httpGet = new HttpGet(Connection.getConnectionURL()+"/a/status");
+			
+			HttpResponse response = httpclient.execute(httpGet);
 
 			String responseAsString = EntityUtils.toString(response.getEntity());
-
-			return responseAsString;
+			JSONObject jsonObject=new JSONObject(responseAsString);
+			//JSOn objects received as part of response
+			JSONObject neighbours=jsonObject.getJSONObject("neighbourhood").getJSONObject("neighbours");
+		
+			Iterator<String> refs=neighbours.keys();
+			while(refs.hasNext())
+			{
+				String key=refs.next().toString();
+			
+				if(neighbours.getJSONObject(key).getBoolean("isHome"))
+				{
+					references.add(key);
+				}
+				
+			}
+			return references;
 
 		} catch (Exception e) {
-			logger.error("Exception occurred while onboaring", e);
-			throw new IllegalArgumentException("Exception occurred while onboaring:" + e.getMessage());
+			logger.error("Exception occurred while getting node references", e);
+			throw new IllegalArgumentException("Exception occurred while getting node references" + e.getMessage());
 		}
-
 	}
-
+	
+	public static void main(String []args)
+	{
+		Node n=new Node();
+		n.getNodeReferences();
+	}
 }
