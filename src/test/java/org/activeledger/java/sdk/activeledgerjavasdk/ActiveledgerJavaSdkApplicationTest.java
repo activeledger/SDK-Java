@@ -1,35 +1,27 @@
 package org.activeledger.java.sdk.activeledgerjavasdk;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
-import org.activeledger.java.sdk.generic.transaction.GenericTransaction;
-import org.activeledger.java.sdk.generic.transaction.Transaction;
-import org.activeledger.java.sdk.generic.transaction.TxObject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.sse.InboundSseEvent;
+import javax.ws.rs.sse.SseEventSource;
+
 import org.activeledger.java.sdk.key.management.Encryption;
 import org.activeledger.java.sdk.key.management.KeyGen;
-import org.activeledger.java.sdk.onboard.OnboardIdentity;
-import org.activeledger.java.sdk.signature.Sign;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import net.minidev.json.parser.ParseException;
 
 public class ActiveledgerJavaSdkApplicationTest {
 
@@ -63,95 +55,45 @@ public class ActiveledgerJavaSdkApplicationTest {
 		KeyPair keyPair = keyGen.generateKeyPair(Encryption.EC);
 		return keyPair;
 	}
+	
 
-	// Transfer funds request
+    private Client client;
+    private WebTarget tut;
+
+    @Before
+    public void initClient() {
+        this.client = ClientBuilder.newClient();
+        this.tut = this.client.target("http://testnet-uk.activeledger.io:5259/api/activity/subscribe/33bbec76df05b1476aa47aa161b116681e3510049529df10cc3c03b41a00f786");
+    }
+
 	@Test
-	public void transferFundsTransactionTest() throws Exception {
-		KeyPair firstKeyPair = generateRSAkeyPair();
-		KeyPair secondKeyPair = generateECDSAkeyPair();
-		Transaction transaction = new Transaction();
-		TxObject txObject = new TxObject();
-		Map<String, Object> inputIdentityMap = new HashMap<>();
-		Map<String, Object> inputIdentityMap1 = new HashMap<>(); // instead of map, jsonObject can be used
-		Map<String, Object> outputIdentityMap = new HashMap<>();
-		Map<String, Object> outputIdentityMap1 = new HashMap<>(); // instead of map, jsonObject can be used
-		Map<String, Object> signature = new HashMap<>();
+    public void init() throws IOException, InterruptedException {
+		Client client = ClientBuilder.newClient();
+		WebTarget target = client.target("http://testnet-uk.activeledger.io:5261/api/activity/subscribe");
+		SseEventSource source = SseEventSource.target(target).build() ;
+		    source.register((inboundSseEvent) -> {this.onMessage(inboundSseEvent);});
+		    source.open();
+		    
+		   
+		
+		
+		
+	Thread.sleep(30000);
+        
+        //block here, otherwise the test method will complete
+    }
 
-		// onboarding first identity
-		OnboardIdentity onboardIdentity = (OnboardIdentity) ctx.getBean("OnboardIdentity");
-		JSONObject inJson = onboardIdentity.onboard(firstKeyPair, Encryption.RSA, "firstkey");
-		String inputIdentity = parseJson(inJson).get("id");
+    void onMessage(InboundSseEvent event) {
+    	System.out.println("---------In Message-----------");
+        String id = event.getId();
+        String name = event.getName();
+        String payload = event.readData();
+        String comment = event.getComment();
+        System.out.println("id:"+id+"\nname:"+name+"\npayload:"+payload+"\ncomment:"+comment);
+        //processing...
+    }
 
-		// onboarding second identity
-		JSONObject outJson = onboardIdentity.onboard(secondKeyPair, Encryption.EC, "secondkey");
-		String outputIdentity = parseJson(outJson).get("id");
 
-		txObject.setContract("df9f84846ace992d7aa13b8f7d4295b4a0d54f178e0059d96208dd1b2183b297"); // sample contract
-																									// stream id
-		txObject.setNamespace("ns2"); // namespace of the contract
-		inputIdentityMap1.put("symbol", "usd");
-		inputIdentityMap1.put("amount", 5);
-		inputIdentityMap.put(inputIdentity, inputIdentityMap1);
-
-		outputIdentityMap1.put("amount", 5);
-		outputIdentityMap.put(outputIdentity, outputIdentityMap1);
-		txObject.setInputIdentity(inputIdentityMap);
-		txObject.setOutputIdentity(outputIdentityMap);
-		txObject.setEntry("transfer");
-		transaction.setTxObject(txObject);
-		Sign sign = (Sign) ctx.getBean("Sign");
-		String signed = sign.signMessage(mapper.writeValueAsBytes(txObject), firstKeyPair, Encryption.RSA);
-		signature.put(inputIdentity, signed);
-		transaction.setSignature(signature);
-
-		GenericTransaction genericTransaction = (GenericTransaction) ctx.getBean("GenericTransaction");
-		JSONObject genericTransactionOutput = genericTransaction.transaction(transaction);
-		Map<String, String> output = parseJson(genericTransactionOutput);
-		assertEquals(output.get("total").toString(), output.get("commit").toString());
-		// logger.info("Transaction output:"+genericTransactionOutput.toString(2));
-
-	}
-
-	@After
-	public void destroy() {
-		File file = new File("pub-key.pem");
-		if (file.exists()) {
-			file.delete();
-		}
-	}
-
-	public void getArray(Object object2) throws ParseException {
-
-		JSONArray jsonArr = (JSONArray) object2;
-
-		for (int k = 0; k < jsonArr.length(); k++) {
-
-			if (jsonArr.get(k) instanceof JSONObject) {
-				parseJson((JSONObject) jsonArr.get(k));
-			}
-
-		}
-	}
-
-	public Map<String, String> parseJson(JSONObject jsonObject) throws ParseException {
-
-		Set<String> set = jsonObject.keySet();
-		Iterator<String> iterator = set.iterator();
-		while (iterator.hasNext()) {
-			Object obj = iterator.next();
-			if (jsonObject.get(obj.toString()) instanceof JSONArray) {
-				getArray(jsonObject.get(obj.toString()));
-			} else {
-				if (jsonObject.get(obj.toString()) instanceof JSONObject) {
-					parseJson((JSONObject) jsonObject.get(obj.toString()));
-				} else {
-
-					map.put(obj.toString(), jsonObject.get(obj.toString()).toString());
-
-				}
-			}
-		}
-		return map;
-	}
+	
 
 }

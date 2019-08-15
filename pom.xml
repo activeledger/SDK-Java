@@ -87,9 +87,9 @@
 			<version>20180130</version>
 		</dependency>
 		<dependency>
-		    <groupId>net.minidev</groupId>
-		    <artifactId>json-smart</artifactId>
-		    <version>1.0.9</version>
+			<groupId>net.minidev</groupId>
+			<artifactId>json-smart</artifactId>
+			<version>1.0.9</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
 		<dependency>
@@ -98,39 +98,62 @@
 			<version>2.0.4.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-client</artifactId>
+			<version>3.3.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.launchdarkly/okhttp-eventsource -->
+		<dependency>
+		    <groupId>com.launchdarkly</groupId>
+		    <artifactId>okhttp-eventsource</artifactId>
+		    <version>1.10.0</version>
+		</dependency>
+		
+		<!-- <dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-sse</artifactId>
+			<version>3.3.2</version>
+		</dependency> -->
+		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-client -->
+<dependency>
+    <groupId>org.glassfish.jersey.core</groupId>
+    <artifactId>jersey-client</artifactId>
+    <version>2.29</version>
+</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-sse -->
+<dependency>
+    <groupId>org.glassfish.jersey.media</groupId>
+    <artifactId>jersey-media-sse</artifactId>
+    <version>2.29</version>
+</dependency>
+		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.inject/jersey-hk2 -->
+<dependency>
+    <groupId>org.glassfish.jersey.inject</groupId>
+    <artifactId>jersey-hk2</artifactId>
+    <version>2.29</version>
+</dependency>
+		
 	</dependencies>
 
 	<build>
 		<plugins>
-			<!-- <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.17</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<consoleOutput>true</consoleOutput>
-					<logViolationsToConsole>true</logViolationsToConsole>
-					<failOnViolation>true</failOnViolation>
-					<failsOnError>true</failsOnError>
-					<sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-					<configLocation>checkstyle-config.xml</configLocation>
-					<includeTestSourceDirectory>true</includeTestSourceDirectory>
-				</configuration>
-			</plugin> -->
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-checkstyle-plugin</artifactId> 
+				<version>2.17</version> <executions> <execution> <goals> <goal>check</goal> 
+				</goals> </execution> </executions> <configuration> <consoleOutput>true</consoleOutput> 
+				<logViolationsToConsole>true</logViolationsToConsole> <failOnViolation>true</failOnViolation> 
+				<failsOnError>true</failsOnError> <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory> 
+				<configLocation>checkstyle-config.xml</configLocation> <includeTestSourceDirectory>true</includeTestSourceDirectory> 
+				</configuration> </plugin> -->
 			<plugin>
-       			 <groupId>org.apache.maven.plugins</groupId>
-       			 <artifactId>maven-surefire-plugin</artifactId>
-       			 <version>2.12.4</version>
-       			 <configuration>
-         			 <skipTests>true</skipTests>
-        		 </configuration>
-     	    </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
