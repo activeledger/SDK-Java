@@ -99,9 +99,9 @@ public class Transaction {
 		this.signature = signature;
 	}
 
-	public Transaction createTransaction(TxObject txObject,String territoriaity,boolean selfSign) throws Exception
+	public void createTransaction(TxObject txObject,String territoriaity,boolean selfSign) throws Exception
 	{
-		Transaction transaction=new Transaction();
+		
 		Map<String,Object> temp=new HashMap<>();
 		
 		//Get values from localstorage
@@ -126,17 +126,17 @@ public class Transaction {
 		Map<String, Object> signature = new HashMap<>();
 		
 		signature.put(stream, signed);
-		transaction.setSignature(signature);
-		transaction.setTxObject(txObject);
-		transaction.setSelfSign(selfSign);
-		transaction.setTerritoriality(territoriaity);
-		return transaction;
+		this.setSignature(signature);
+		this.setTxObject(txObject);
+		this.setSelfSign(selfSign);
+		this.setTerritoriality(territoriaity);
+		
 	}
 	
 	
 	public TxResponse createAndSendTransaction(TxObject txObject,String territoriaity,boolean selfSign) throws Exception
 	{
-		Transaction transaction=new Transaction();
+		//Transaction transaction=new Transaction();
 		Map<String,Object> temp=new HashMap<>();
 		
 		//Get values from localstorage
@@ -157,11 +157,11 @@ public class Transaction {
 		Sign sign = (Sign) ActiveledgerJavaSdkApplication.getContext().getBean("Sign");
 		String signed = sign.signMessage(mapper.writeValueAsBytes(txObject), keyPair, type);
 		signature.put(stream, signed);
-		transaction.setSignature(signature);
-		transaction.setTxObject(txObject);
-		transaction.setSelfSign(selfSign);
-		transaction.setTerritoriality(territoriaity);
-		return sendTransaction(transaction);
+		this.setSignature(signature);
+		this.setTxObject(txObject);
+		this.setSelfSign(selfSign);
+		this.setTerritoriality(territoriaity);
+		return sendTransaction(this);
 		
 	}
 	public TxResponse sendTransaction(Transaction transaction) throws Exception
