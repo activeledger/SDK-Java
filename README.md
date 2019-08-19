@@ -62,7 +62,7 @@ TxResponse resp = onboardIdentity.onboard(KeyPair, Encryption.RSA/Encryption.EC,
 Transaction transaction=new Transaction();
 
 transaction.createTransaction(txObject,null, false);
-transaction.sendTransaction(Transaction);
+transaction.sendTransaction();
 or
 transaction.createAndSendTransaction(txObject,null, false);
 
