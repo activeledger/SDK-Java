@@ -27,8 +27,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.activeledger.java.sdk.activeledgerjavasdk.ActiveledgerJavaSdkApplication;
+import org.activeledger.java.sdk.generic.transaction.TxResponse;
 import org.activeledger.java.sdk.key.management.Encryption;
 import org.activeledger.java.sdk.signature.Sign;
+import org.activeledger.java.sdk.storage.LocalStorage;
+import org.activeledger.java.sdk.utility.Parsing;
 import org.activeledger.java.sdk.utility.Utility;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +50,10 @@ public class OnboardIdentity {
 	private Environment env;
 
 	ObjectMapper mapper;
-
+	Parsing parsing;
 	public OnboardIdentity() {
 		mapper = new ObjectMapper();
+		parsing=new Parsing();
 	}
 
 /*
@@ -59,8 +63,10 @@ public class OnboardIdentity {
  * 		  iii: Preferred key name.
  * output: JSONObject containing identity. Utility function parsejson can be used to extract identity 
  */
-	public JSONObject onboard(KeyPair keyPair, Encryption encrp, String keyName) throws Exception {
-
+	public TxResponse onboard(KeyPair keyPair, Encryption encrp, String keyName) throws Exception {/*
+		System.out.println("-----private in onboard-----"+Utility.convertToStringPemFormat(keyPair.getPrivate()));
+		System.out.println("-----public in onboard-----"+Utility.convertToStringPemFormat(keyPair.getPublic()));*/
+	
 		OnboardTransaction onboardTransaction = new OnboardTransaction();
 		OnboardTxObject txObject = new OnboardTxObject();
 		Identity identity = new Identity();
@@ -88,8 +94,22 @@ public class OnboardIdentity {
 
 		//Transaction object is complete and is ready to send to Activeledger
 		JSONObject jsonObj = new JSONObject(onboardIdentityReq.onBoardIdentity(onboardTransaction));
-
-		return jsonObj;
+		Map<String,String> idMap=new HashMap<>();
+		TxResponse txResp=new TxResponse();
+		idMap=parsing.parseJson(jsonObj);
+		if (idMap.get("id") != null) {
+			txResp.setId(idMap.get("id"));
+			String stream = idMap.get("id");
+			LocalStorage.getStore().put("stream", stream);
+			LocalStorage.getStore().put("keyName", keyName);
+			
+		} else {
+			txResp.setError(idMap.get("error"));
+			
+		}
+	
+		System.out.println("-----streamid-----"+txResp.getId());
+		return txResp;
 
 	}
 

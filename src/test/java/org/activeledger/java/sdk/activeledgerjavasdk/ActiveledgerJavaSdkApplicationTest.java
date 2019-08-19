@@ -15,8 +15,13 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.sse.InboundSseEvent;
 import javax.ws.rs.sse.SseEventSource;
 
+import org.activeledger.java.sdk.generic.transaction.Transaction;
+import org.activeledger.java.sdk.generic.transaction.TxObject;
+import org.activeledger.java.sdk.generic.transaction.TxResponse;
 import org.activeledger.java.sdk.key.management.Encryption;
 import org.activeledger.java.sdk.key.management.KeyGen;
+import org.activeledger.java.sdk.onboard.OnboardIdentity;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -57,41 +62,44 @@ public class ActiveledgerJavaSdkApplicationTest {
 	}
 	
 
-    private Client client;
-    private WebTarget tut;
-
-    @Before
-    public void initClient() {
-        this.client = ClientBuilder.newClient();
-        this.tut = this.client.target("http://testnet-uk.activeledger.io:5259/api/activity/subscribe/33bbec76df05b1476aa47aa161b116681e3510049529df10cc3c03b41a00f786");
-    }
-
 	@Test
-    public void init() throws IOException, InterruptedException {
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("http://testnet-uk.activeledger.io:5261/api/activity/subscribe");
-		SseEventSource source = SseEventSource.target(target).build() ;
-		    source.register((inboundSseEvent) -> {this.onMessage(inboundSseEvent);});
-		    source.open();
-		    
-		   
-		
-		
-		
-	Thread.sleep(30000);
-        
-        //block here, otherwise the test method will complete
-    }
+	public void TempTest() throws Exception {
+		KeyPair keyPair = generateRSAkeyPair();
+		Transaction transaction = new Transaction();
+		TxObject txObject = new TxObject();
+		Map<String, Object> inputIdentityMap = new HashMap<>();
+		Map<String, Object> signature = new HashMap<>();
 
-    void onMessage(InboundSseEvent event) {
-    	System.out.println("---------In Message-----------");
-        String id = event.getId();
-        String name = event.getName();
-        String payload = event.readData();
-        String comment = event.getComment();
-        System.out.println("id:"+id+"\nname:"+name+"\npayload:"+payload+"\ncomment:"+comment);
-        //processing...
-    }
+		// onboarding first identity
+		OnboardIdentity onboardIdentity = (OnboardIdentity) ctx.getBean("OnboardIdentity");
+		TxResponse resp = onboardIdentity.onboard(keyPair, Encryption.RSA, "writer");
+		//String inputIdentity = parseJson(inJson).get("id");// can be later used
+		//System.out.println("stream id:"+resp.getId());
+		
+		
+		txObject.setContract("easa"); // sample contract
+																									// stream id
+		txObject.setNamespace("pdfnamespace"); // namespace of the contract
+		
+		JSONObject writer=new JSONObject();
+	//	writer.put("$stream",inputIdentity);
+		
+		JSONObject organization=new JSONObject();
+		organization.put("nameAndAddress", "Test Name ltd and Address");
+		organization.put("workOrder","456");
+		writer.put("organization",organization);
+		writer.put("formTrackingNumber","123");
+		inputIdentityMap.put("writer", writer.toMap());
+		
+		txObject.setInputIdentity(inputIdentityMap);
+		
+		transaction=transaction.createTransaction(txObject,null, false);
+		System.out.println(mapper.writeValueAsString(transaction));
+		
+	}
+		
+		
+	
 
 
 	

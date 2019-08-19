@@ -1,6 +1,8 @@
 /target/
 /priv-key.pem
 /pub-key.pem
+/src/test/
+/logs/
 
 
 ### STS ###

@@ -54,7 +54,7 @@ public class OnboardIdentityReq {
 
 		try {
 			String transactionJson = mapper.writeValueAsString(transaction);
-
+System.out.println("Transaction json onboard:\n"+transactionJson);
 			HttpClient httpclient = HttpClients.createDefault();
 			HttpPost httppost = new HttpPost(Connection.getConnectionURL());
 

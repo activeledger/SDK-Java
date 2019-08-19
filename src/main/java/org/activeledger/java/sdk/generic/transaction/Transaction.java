@@ -22,13 +22,24 @@
  */
 package org.activeledger.java.sdk.generic.transaction;
 
+import java.security.KeyPair;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.DefaultValue;
 
+import org.activeledger.java.sdk.activeledgerjavasdk.ActiveledgerJavaSdkApplication;
+import org.activeledger.java.sdk.key.management.Encryption;
+import org.activeledger.java.sdk.signature.Sign;
+import org.activeledger.java.sdk.storage.LocalStorage;
+import org.activeledger.java.sdk.utility.Parsing;
+import org.activeledger.java.sdk.utility.Utility;
+import org.json.JSONObject;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 /*
  * 
  * This class represents the Transaction request object which will be sent to Activeledger
@@ -46,6 +57,14 @@ public class Transaction {
 	private boolean selfSign;
 	@JsonProperty("$sigs")
 	private Map<String, Object> signature;
+	
+	ObjectMapper mapper;
+
+	public Transaction()
+	{
+		mapper=new ObjectMapper();
+	}
+	
 
 
 	public String getTerritoriality() {
@@ -80,4 +99,86 @@ public class Transaction {
 		this.signature = signature;
 	}
 
+	public Transaction createTransaction(TxObject txObject,String territoriaity,boolean selfSign) throws Exception
+	{
+		Transaction transaction=new Transaction();
+		Map<String,Object> temp=new HashMap<>();
+		
+		//Get values from localstorage
+		String keyName=(String)LocalStorage.getStore().get("keyName");
+		KeyPair keyPair=(KeyPair)LocalStorage.getStore().get("keyPair");
+		String stream=(String)LocalStorage.getStore().get("stream");
+		Encryption type=(Encryption)LocalStorage.getStore().get("type");
+		
+		for(Map.Entry<String,Object> inputMap: txObject.getInputIdentity().entrySet())
+		{
+			Map<String,Object> value=(Map)inputMap.getValue();
+			value.put("$stream", stream);
+			txObject.getInputIdentity().clear();
+			temp.put(keyName, value);
+			
+		}
+		txObject.setInputIdentity(temp);
+		
+		Sign sign = (Sign) ActiveledgerJavaSdkApplication.getContext().getBean("Sign");
+		
+		String signed = sign.signMessage(mapper.writeValueAsBytes(txObject), keyPair, type);
+		Map<String, Object> signature = new HashMap<>();
+		
+		signature.put(stream, signed);
+		transaction.setSignature(signature);
+		transaction.setTxObject(txObject);
+		transaction.setSelfSign(selfSign);
+		transaction.setTerritoriality(territoriaity);
+		return transaction;
+	}
+	
+	
+	public TxResponse createAndSendTransaction(TxObject txObject,String territoriaity,boolean selfSign) throws Exception
+	{
+		Transaction transaction=new Transaction();
+		Map<String,Object> temp=new HashMap<>();
+		
+		//Get values from localstorage
+		String keyName=(String)LocalStorage.getStore().get("keyName");
+		KeyPair keyPair=(KeyPair)LocalStorage.getStore().get("keyPair");
+		String stream=(String)LocalStorage.getStore().get("stream");
+		Encryption type=(Encryption)LocalStorage.getStore().get("type");
+		
+		for(Map.Entry<String,Object> inputMap: txObject.getInputIdentity().entrySet())
+		{
+			Map<String,Object> value=(Map)inputMap.getValue();
+			value.put("$stream", stream);
+			txObject.getInputIdentity().remove(inputMap.getKey());
+			temp.put(keyName, value);
+			
+		}
+		txObject.setInputIdentity(temp);
+		Sign sign = (Sign) ActiveledgerJavaSdkApplication.getContext().getBean("Sign");
+		String signed = sign.signMessage(mapper.writeValueAsBytes(txObject), keyPair, type);
+		signature.put(stream, signed);
+		transaction.setSignature(signature);
+		transaction.setTxObject(txObject);
+		transaction.setSelfSign(selfSign);
+		transaction.setTerritoriality(territoriaity);
+		return sendTransaction(transaction);
+		
+	}
+	public TxResponse sendTransaction(Transaction transaction) throws Exception
+	{
+		GenericTransaction genericTransaction = (GenericTransaction) ActiveledgerJavaSdkApplication.getContext().getBean("GenericTransaction");
+		JSONObject genericTransactionOutput = genericTransaction.transaction(transaction);
+		Map<String,String> idMap=new HashMap<>();
+		TxResponse txResp=new TxResponse();
+		Parsing parsing=new Parsing();
+		idMap=parsing.parseJson(genericTransactionOutput);
+		if (idMap.get("id") != null) {
+			txResp.setId(idMap.get("id"));	
+		} else {
+			txResp.setError(idMap.get("error"));	
+		}
+		
+		return txResp;
+		
+	}
 }

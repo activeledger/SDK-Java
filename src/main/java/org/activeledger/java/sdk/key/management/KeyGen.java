@@ -32,6 +32,7 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.spec.ECGenParameterSpec;
 
+import org.activeledger.java.sdk.storage.LocalStorage;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +73,9 @@ public class KeyGen {
 		} else if (encrp == Encryption.EC) {
 			keyPair = createSecp256k1KeyPair();
 		}
-
+		LocalStorage.getStore().put("keyPair", keyPair);
+		LocalStorage.getStore().put("type", encrp);
+		
 		return keyPair;
 	}
 	

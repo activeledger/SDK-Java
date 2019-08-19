@@ -13,6 +13,7 @@ public class EventSubscription {
 	public void subscribe(String host,String port,EventHandlerInterface eventHandler) throws InterruptedException, InstantiationException, IllegalAccessException, ClassNotFoundException 
 	{
 		
+		
 		EventHandler eh = new SSEHandler(eventHandler);
 
 	    String url = String.format("http://"+host+":"+port+"/api/activity/subscribe");
@@ -20,7 +21,8 @@ public class EventSubscription {
 		builder.connectTimeoutMs(120000);
 		builder.readTimeoutMs(120000);
 	    EventSource eventSource = builder.build() ;
-		eventSource.start();	
+		eventSource.start();
+		
 		TimeUnit.MINUTES.sleep(10);
 		
 		
