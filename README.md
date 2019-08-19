@@ -43,19 +43,28 @@ KeyPair keyPair = keyGen.generateKeyPair(Encryption.RSA);
 ### Key onboarding
 ```
 OnboardIdentity onboardIdentity = (OnboardIdentity) ctx.getBean("OnboardIdentity");
-JSONObject inJson = onboardIdentity.onboard(KeyPair, Encryption.RSA/Encryption.EC, "local");// "local" is a keyName. Can be changed to anything
+TxResponse resp = onboardIdentity.onboard(KeyPair, Encryption.RSA/Encryption.EC, "local");// "local" is a keyName. Can be changed to anything. TxResponse will either give you an erorr or streamID
+
 ```
     
 ### Transaction Building    
- Import the transaction Object and the TxObject from the sdk and build the transaction as per requirements.
- Sign the txObject
+ Transaction class has 2 functions which you can use for building the Transaction.
+ Build the TxObject and send it to either
+ 1) createTransaction(TxObject,Territoriality,selfsign) - creates and returns the Transaction Object
+ 	- You can update the sigs object if needed in the returned Transaction Object.
+	- To use the territoriality, pass the nodeID. Otherwise null.
+	- If transaction is self signed , send true otherwise false
+	- Use sendTransaction(Transaction) to send the transaction to activeledger
+ 2) createAndSendTransation(TxObject,Territoriality,selfsign) - creates and sends the transaction to Activeledger. 
+ 	- You will get a TxResponse object in return which will give you either the streamID or error.
+ 
 ```
-Sign sign = (Sign) ctx.getBean("Sign");
-String signed = sign.signMessage(mapper.writeValueAsBytes(txObject), keyPair, Encryption.RSA);
+Transaction transaction=new Transaction();
+
+transaction.createTransaction(txObject,null, false);
+transaction.sendTransaction(Transaction);
+or
+transaction.createAndSendTransaction(txObject,null, false);
 
 ```
-Include the the signature in the transaction and send it
-```
-GenericTransaction genericTransaction = (GenericTransaction) ctx.getBean("GenericTransaction");
-JSONObject genericTransactionOutput = genericTransaction.transaction(transaction);
-```
+
