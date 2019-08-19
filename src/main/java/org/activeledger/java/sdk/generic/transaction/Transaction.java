@@ -161,13 +161,13 @@ public class Transaction {
 		this.setTxObject(txObject);
 		this.setSelfSign(selfSign);
 		this.setTerritoriality(territoriaity);
-		return sendTransaction(this);
+		return this.sendTransaction();
 		
 	}
-	public TxResponse sendTransaction(Transaction transaction) throws Exception
+	public TxResponse sendTransaction() throws Exception
 	{
 		GenericTransaction genericTransaction = (GenericTransaction) ActiveledgerJavaSdkApplication.getContext().getBean("GenericTransaction");
-		JSONObject genericTransactionOutput = genericTransaction.transaction(transaction);
+		JSONObject genericTransactionOutput = genericTransaction.transaction(this);
 		Map<String,String> idMap=new HashMap<>();
 		TxResponse txResp=new TxResponse();
 		Parsing parsing=new Parsing();
