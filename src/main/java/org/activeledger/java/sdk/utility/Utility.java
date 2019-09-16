@@ -30,19 +30,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.Key;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.util.io.pem.PemWriter;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import net.minidev.json.parser.ParseException;
 /*
  * Utility class with some helper methods
  */
@@ -51,7 +43,7 @@ public class Utility {
 	private static PemObject pemObject;
 	private static final Logger logger = Logger.getLogger(Utility.class);
 	public static final String FILENAME = "priv-key.pem";
-	public static final String DESC = "PUBLIC KEY";
+	public static final String DESC = "Private Key";
 	
 	public Utility(String filename) throws FileNotFoundException, IOException {
 		PemReader pemReader = new PemReader(new InputStreamReader(new FileInputStream(filename)));

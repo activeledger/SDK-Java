@@ -63,10 +63,8 @@ public class OnboardIdentity {
  * 		  iii: Preferred key name.
  * output: JSONObject containing identity. Utility function parsejson can be used to extract identity 
  */
-	public TxResponse onboard(KeyPair keyPair, Encryption encrp, String keyName) throws Exception {/*
-		System.out.println("-----private in onboard-----"+Utility.convertToStringPemFormat(keyPair.getPrivate()));
-		System.out.println("-----public in onboard-----"+Utility.convertToStringPemFormat(keyPair.getPublic()));*/
-	
+	public TxResponse onboard(KeyPair keyPair, Encryption encrp, String keyName) throws Exception {
+		
 		OnboardTransaction onboardTransaction = new OnboardTransaction();
 		OnboardTxObject txObject = new OnboardTxObject();
 		Identity identity = new Identity();
@@ -75,8 +73,8 @@ public class OnboardIdentity {
 		} else {
 			identity.setType(env.getProperty("ec.curve"));// get the type of curve. Currently only secp256 is supported
 		}
-		Utility.convertToStringPemFormat(keyPair.getPublic());
-		identity.setPublicKey(Utility.readFileAsString("pub-key.pem"));//Convert public key object into poem formated string to store in the transaction
+		
+		identity.setPublicKey(Utility.convertToStringPemFormat(keyPair.getPublic()));//Convert public key object into pem formated string to store in the transaction
 		Map<String, Identity> inputIdentity = new HashMap<>();
 		Map<String, String> signature = new HashMap<>();
 		inputIdentity.put(keyName, identity);
@@ -108,8 +106,7 @@ public class OnboardIdentity {
 			txResp.setError(idMap.get("error"));
 			
 		}
-	
-		System.out.println("-----streamid-----"+txResp.getId());
+
 		return txResp;
 
 	}

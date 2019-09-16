@@ -108,7 +108,6 @@ public class Transaction {
 		String keyName=(String)LocalStorage.getStore().get("keyName");
 		KeyPair keyPair=(KeyPair)LocalStorage.getStore().get("keyPair");
 		String stream=(String)LocalStorage.getStore().get("stream");
-		//stream="94430e565059dc5641b2efdf76f1e5fcbaeb8d2d0d32d785402bf5bbf9689841";
 		Encryption type=(Encryption)LocalStorage.getStore().get("type");
 		for(Map.Entry<String,Object> inputMap: txObject.getInputIdentity().entrySet())
 		{
