@@ -22,6 +22,8 @@
  */
 package org.activeledger.java.sdk.onboard;
 
+import java.math.BigInteger;
+
 import org.activeledger.java.sdk.connection.Connection;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -64,7 +66,7 @@ System.out.println("Transaction json onboard:\n"+transactionJson);
 			HttpResponse response = httpclient.execute(httppost);
 
 			String responseAsString = EntityUtils.toString(response.getEntity());
-
+		
 			return responseAsString;
 
 		} catch (Exception e) {

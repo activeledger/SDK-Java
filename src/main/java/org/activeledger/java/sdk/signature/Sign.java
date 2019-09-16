@@ -22,13 +22,16 @@
  */
 package org.activeledger.java.sdk.signature;
 
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Signature;
+import java.security.spec.PKCS8EncodedKeySpec;
 
 import javax.xml.bind.DatatypeConverter;
 
 import org.activeledger.java.sdk.key.management.Encryption;
+import org.activeledger.java.sdk.utility.Utility;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -46,11 +49,12 @@ public class Sign {
  */
 	public String signMessage(byte[] message, KeyPair keyPair, Encryption encrp) {
 		Signature sign = null;
-
+		KeyFactory factory = null;
 		try {
 			if (encrp == Encryption.RSA) {
 				sign = Signature.getInstance("SHA256withRSA", "BC");
-			} else if (encrp == Encryption.EC) {
+				factory = KeyFactory.getInstance("RSA", "BC");
+				} else if (encrp == Encryption.EC) {
 				sign = Signature.getInstance("SHA256withECDSA", "BC");
 			}
 		} catch (Exception e) {
@@ -58,7 +62,8 @@ public class Sign {
 			throw new IllegalArgumentException("Unable to get Signature Instance");
 		}
 
-		PrivateKey pk = keyPair.getPrivate(); // generatePrivateKey(factory, PRIVATE_KEY);
+		//PrivateKey pk = keyPair.getPrivate(); 
+		PrivateKey pk =  generatePrivateKey(factory, PRIVATE_KEY);
 
 		try {
 			sign.initSign(pk);
@@ -70,6 +75,18 @@ public class Sign {
 			throw new IllegalArgumentException("Unable to sign the object:" + e.getMessage());
 		}
 
+	}
+	
+	private static PrivateKey generatePrivateKey(KeyFactory factory, String filename) {
+		try {
+			Utility pemFile = new Utility(filename);
+			byte[] content = pemFile.getPemObject().getContent();
+			PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(content);
+			return factory.generatePrivate(privateKeySpec);
+		} catch (Exception e) {
+			logger.error("Error in generating private key",e);
+			throw new IllegalArgumentException("Error in generating private key:" + e.getMessage());
+		}
 	}
 
 }

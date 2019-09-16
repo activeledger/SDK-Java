@@ -24,6 +24,7 @@ package org.activeledger.java.sdk.utility;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +37,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.bouncycastle.util.io.pem.PemObject;
+import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -48,9 +50,20 @@ public class Utility {
 
 	private static PemObject pemObject;
 	private static final Logger logger = Logger.getLogger(Utility.class);
-	public static final String FILENAME = "pub-key.pem";
+	public static final String FILENAME = "priv-key.pem";
 	public static final String DESC = "PUBLIC KEY";
 	
+	public Utility(String filename) throws FileNotFoundException, IOException {
+		PemReader pemReader = new PemReader(new InputStreamReader(new FileInputStream(filename)));
+		try {
+			this.pemObject = pemReader.readPemObject();
+		} finally {
+			pemReader.close();
+		}
+	}
+	public PemObject getPemObject() {
+		return pemObject;
+	}
 	@Override
 	public String toString() {
 		return "PemFile [pemObject=" + pemObject + "]";
@@ -66,7 +79,7 @@ public class Utility {
 
 	}
 
-	private static String readFileAsString(String fileName) {
+	public static String readFileAsString(String fileName) {
 		try {
 			InputStream is = new FileInputStream(fileName);
 			BufferedReader buf = new BufferedReader(new InputStreamReader(is));
@@ -94,7 +107,6 @@ public class Utility {
 			logger.error("Unable to write pem file", e);
 			throw new IllegalArgumentException("Unable to write pem file", e);
 		}
-
 	}
 
 }

@@ -75,7 +75,8 @@ public class OnboardIdentity {
 		} else {
 			identity.setType(env.getProperty("ec.curve"));// get the type of curve. Currently only secp256 is supported
 		}
-		identity.setPublicKey(Utility.convertToStringPemFormat(keyPair.getPublic()));//Convert public key object into poem formated string to store in the transaction
+		Utility.convertToStringPemFormat(keyPair.getPublic());
+		identity.setPublicKey(Utility.readFileAsString("pub-key.pem"));//Convert public key object into poem formated string to store in the transaction
 		Map<String, Identity> inputIdentity = new HashMap<>();
 		Map<String, String> signature = new HashMap<>();
 		inputIdentity.put(keyName, identity);
