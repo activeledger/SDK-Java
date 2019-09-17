@@ -10,6 +10,12 @@ Welcome to Java SDK for Activeledger. This SDK facilitates the user in sending t
 - JDK 1.8 or above
 - Apache Maven 3.7.0
 
+## Importing in your code
+
+- Add maven { url 'https://jitpack.io' } as one of the repositories in your pom or gradle file
+- Add in Dependecies
+ 	```implementation 'com.github.activeledger:SDK-Java:<tag>'```
+
 ## Installing
 
 - mvn install
