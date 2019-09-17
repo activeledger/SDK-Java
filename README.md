@@ -60,6 +60,8 @@ TxResponse resp = onboardIdentity.onboard(KeyPair, Encryption.RSA/Encryption.EC,
  
 ```
 Transaction transaction=new Transaction();
+transaction.setTxObject={}//create TXObject using model classes
+
 TxReqOptions opts=new TxReqOptions();
 opts.setStream(<streamId>);//optianed from onbaording
 opts.setKeyPair(<keyPair>);//generated keyPair
@@ -67,6 +69,7 @@ opts.setKeyName(<keyName>);//keyName used while onboarding
 opts.setType(<type>);//keyType
 opts.setTerritoriality(<node id>);
 opts.isSelfSign(<selfSign>);
+
 transaction.createTransaction(opts);
 transaction.sendTransaction();
 or
