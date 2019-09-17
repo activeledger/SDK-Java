@@ -50,21 +50,27 @@ TxResponse resp = onboardIdentity.onboard(KeyPair, Encryption.RSA/Encryption.EC,
 ### Transaction Building    
  Transaction class has 2 functions which you can use for building the Transaction.
  Build the TxObject and send it to either
- 1) createTransaction(TxObject,Territoriality,selfsign) - creates and returns the Transaction Object
+ 1) createTransaction(TxReqOptions) - createsthe Transaction Object
  	- You can update the sigs object if needed in the returned Transaction Object.
 	- To use the territoriality, pass the nodeID. Otherwise null.
 	- If transaction is self signed , send true otherwise false
 	- Use sendTransaction(Transaction) to send the transaction to activeledger
- 2) createAndSendTransation(TxObject,Territoriality,selfsign) - creates and sends the transaction to Activeledger. 
+ 2) createAndSendTransation(TxReqOptions) - creates and sends the transaction to Activeledger. 
  	- You will get a TxResponse object in return which will give you either the streamID or error.
  
 ```
 Transaction transaction=new Transaction();
-
-transaction.createTransaction(txObject,null, false);
+TxReqOptions opts=new TxReqOptions();
+opts.setStream(<streamId>);//optianed from onbaording
+opts.setKeyPair(<keyPair>);//generated keyPair
+opts.setKeyName(<keyName>);//keyName used while onboarding
+opts.setType(<type>);//keyType
+opts.setTerritoriality(<node id>);
+opts.isSelfSign(<selfSign>);
+transaction.createTransaction(opts);
 transaction.sendTransaction();
 or
-transaction.createAndSendTransaction(txObject,null, false);
+transaction.createAndSendTransaction(opts);
 
 ```
 
