@@ -99,9 +99,8 @@ public class Transaction {
 		this.signature = signature;
 	}
 
-	public void createTransaction(TxObject txObject,String territoriaity,boolean selfSign) throws Exception
+	public void createTransaction(TxReqOptions options) throws Exception
 	{
-		
 		Map<String,Object> temp=new HashMap<>();
 		
 		//Get values from localstorage
@@ -109,64 +108,64 @@ public class Transaction {
 		KeyPair keyPair=(KeyPair)LocalStorage.getStore().get("keyPair");
 		String stream=(String)LocalStorage.getStore().get("stream");
 		Encryption type=(Encryption)LocalStorage.getStore().get("type");
-		for(Map.Entry<String,Object> inputMap: txObject.getInputIdentity().entrySet())
+		
+		
+		if(keyName==null&&options.getKeyName()==null)
 		{
-			Map<String,Object> value=(Map)inputMap.getValue();
-			value.put("$stream", stream);
-			txObject.getInputIdentity().clear();
-			temp.put(keyName, value);
-			
+			throw new IllegalArgumentException("KeyName missing in request");
 		}
-		txObject.setInputIdentity(temp);
+		
+		if(keyPair==null&&options.getKeyPair()==null)
+		{
+			throw new IllegalArgumentException("keyPair missing in request");
+		}
+		
+		if(stream==null&&options.getStream()==null)
+		{
+			throw new IllegalArgumentException("stream missing in request");
+		}
+		if(type==null&&options.getType()==null)
+		{
+			throw new IllegalArgumentException("type missing in request");
+		}
+		
+		stream=options.getStream()!=null?options.getStream():stream;
+		keyPair=options.getKeyPair()!=null?options.getKeyPair():keyPair;
+		type=options.getType()!=null?options.getType():type;
+		
+		Map<String,Object> value = (Map)this.getTxObject().getInputIdentity().entrySet().iterator().next().getValue();
+		value.put("$stream", stream);
+		temp.put(keyName, value);
+		this.getTxObject().setInputIdentity(temp);
 		
 		Sign sign = (Sign) ActiveledgerJavaSdkApplication.getContext().getBean("Sign");
 		
-		String signed = sign.signMessage(mapper.writeValueAsBytes(txObject), keyPair, type);
+		String signed = sign.signMessage(mapper.writeValueAsBytes(this.getTxObject()), keyPair, type);
 		Map<String, Object> signature = new HashMap<>();
 		
 		signature.put(stream, signed);
 		this.setSignature(signature);
-		this.setTxObject(txObject);
-		this.setSelfSign(selfSign);
-		this.setTerritoriality(territoriaity);
+		this.setTxObject(this.getTxObject());
+		this.setSelfSign(options.isSelfSign());
+		this.setTerritoriality(options.getTerritoriaity());
 		
 	}
 	
 	
-	public TxResponse createAndSendTransaction(TxObject txObject,String territoriaity,boolean selfSign) throws Exception
+	public TxResponse createAndSendTransaction(TxReqOptions options) throws Exception
 	{
-		//Transaction transaction=new Transaction();
-		Map<String,Object> temp=new HashMap<>();
-		
-		//Get values from localstorage
-		String keyName=(String)LocalStorage.getStore().get("keyName");
-		KeyPair keyPair=(KeyPair)LocalStorage.getStore().get("keyPair");
-		String stream=(String)LocalStorage.getStore().get("stream");
-		Encryption type=(Encryption)LocalStorage.getStore().get("type");
-		
-		for(Map.Entry<String,Object> inputMap: txObject.getInputIdentity().entrySet())
-		{
-			Map<String,Object> value=(Map)inputMap.getValue();
-			value.put("$stream", stream);
-			txObject.getInputIdentity().remove(inputMap.getKey());
-			temp.put(keyName, value);
-			
-		}
-		txObject.setInputIdentity(temp);
-		Sign sign = (Sign) ActiveledgerJavaSdkApplication.getContext().getBean("Sign");
-		String signed = sign.signMessage(mapper.writeValueAsBytes(txObject), keyPair, type);
-		signature.put(stream, signed);
-		this.setSignature(signature);
-		this.setTxObject(txObject);
-		this.setSelfSign(selfSign);
-		this.setTerritoriality(territoriaity);
+		this.createTransaction(options);
 		return this.sendTransaction();
 		
 	}
 	public TxResponse sendTransaction() throws Exception
 	{
 		GenericTransaction genericTransaction = (GenericTransaction) ActiveledgerJavaSdkApplication.getContext().getBean("GenericTransaction");
+		
+		
+		
 		JSONObject genericTransactionOutput = genericTransaction.transaction(this);
+		
 		Map<String,String> idMap=new HashMap<>();
 		TxResponse txResp=new TxResponse();
 		Parsing parsing=new Parsing();

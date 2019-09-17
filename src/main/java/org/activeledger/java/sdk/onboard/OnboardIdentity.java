@@ -61,7 +61,7 @@ public class OnboardIdentity {
  * input: i: Keypair of the new identity
  * 		  ii: Encryption used  
  * 		  iii: Preferred key name.
- * output: JSONObject containing identity. Utility function parsejson can be used to extract identity 
+ * output: TxResponse containing identity.
  */
 	public TxResponse onboard(KeyPair keyPair, Encryption encrp, String keyName) throws Exception {
 		
