@@ -90,10 +90,5 @@ public class Node {
 			throw new IllegalArgumentException("Exception occurred while getting node references" + e.getMessage());
 		}
 	}
-	
-	public static void main(String []args)
-	{
-		Node n=new Node();
-		n.getNodeReferences();
-	}
+
 }

@@ -5,27 +5,28 @@ import com.launchdarkly.eventsource.MessageEvent;
 
 public class SSEHandler implements EventHandler {
 
-	EventHandlerInterface test;
+	EventHandlerInterface ehi;
 	public SSEHandler(EventHandlerInterface test)
 	{
-		this.test=test;
+		this.ehi=test;
 	}
 	
 	@Override
 	public void onOpen() throws Exception {
 		//System.out.println("onOpen");
-		test.onOpen();
+		ehi.onOpen();
 	}
 
 	@Override
 	public void onClosed() throws Exception {
 		//System.out.println("onClosed");
+		
 	}
 
 	@Override
 	public void onMessage(String event, MessageEvent messageEvent) throws Exception {
 		
-		test.handleEvent(messageEvent.getData());
+		ehi.handleEvent(messageEvent.getData());
 		
 		
 	}
@@ -37,7 +38,7 @@ public class SSEHandler implements EventHandler {
 
 	@Override
 	public void onError(Throwable t) {
-		test.onError(t);
+		ehi.onError(t);
 	}
 
 
